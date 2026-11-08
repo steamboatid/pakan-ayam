@@ -1,0 +1,233 @@
+<?php
+
+// ------------------------------------------------------------------------
+//
+// INI UNTUK AYAM
+//
+// ------------------------------------------------------------------------
+
+
+include __DIR__ . "/_libs.php";
+include __DIR__ . "/_data.php";
+include __DIR__ . "/_ga.php";
+
+global $master_matr_arr;
+global $main_pop, $sel_pop;
+global $protein_min, $protein_max, $karbo_min, $karbo_max, $price_max;
+global $lemak_max, $serat_max;
+global $susu_max, $roti_max, $khijau_max;
+
+
+// print_rdie($master_matr_arr);
+
+// starter, grower, finisher, bunting, nyusui
+$pig_target = 'bunting';
+// $pig_target = 'nyusui';
+// $pig_target = 'starter';
+// $pig_target = 'grower';
+// $pig_target = 'finisher';
+
+// print_rdie($argv);
+if (isset($argv[1])) $pig_target = strtolower($argv[1]);
+
+$protein_min = 0;
+$protein_max = 0;
+$karbo_min = 0;
+$karbo_max = 0;
+$lemak_max = 5;
+$serat_max = 5;
+
+// $susu_max = 30;
+// $roti_max = 30;
+// $khijau_max = 30;
+
+$def_mix_cap = 100; // 100 kg mixing cap
+$price_max = 7000;
+
+
+if ($pig_target == 'starter') {
+  $protein_min = 10;
+  $protein_max = 22;
+  $karbo_min = 40;
+  $karbo_max = 60;
+  $lemak_max = 8;
+  $serat_max = 8;
+  // $price_max = 7000;
+
+  // not used materials
+  // unset($master_matr_arr['tikan']);
+  // unset($master_matr_arr['jagung']);
+  // unset($master_matr_arr['tkedelai']);
+  unset($master_matr_arr['bekatul']);
+  unset($master_matr_arr['tgaplek']);
+
+  unset($master_matr_arr['kons152']);
+  unset($master_matr_arr['kons157']);
+  //
+
+} elseif ($pig_target == 'grower') {
+  $protein_min = 16;
+  $protein_max = 20;
+  $karbo_min = 55;
+  $karbo_max = 100;
+  $price_max = 6500;
+
+  // not used materials
+  unset($master_matr_arr['pur551']);
+  unset($master_matr_arr['kons157']);
+
+  // unset($master_matr_arr['bekatul']);
+  // unset($master_matr_arr['susureject']);
+  // unset($master_matr_arr['tikan']);
+  // unset($master_matr_arr['troti']);
+  //
+
+} elseif ($pig_target == 'finisher') {
+  $protein_min = 13;
+  $protein_max = 18;
+  $karbo_min = 56;
+  $karbo_max = 100;
+  $price_max = 6500;
+
+  // not used materials
+  unset($master_matr_arr['pur551']);
+  unset($master_matr_arr['kons157']);
+
+  // unset($master_matr_arr['jagung']);
+  // unset($master_matr_arr['bekatul']);
+  // unset($master_matr_arr['troti']);
+  // unset($master_matr_arr['tkachijau']);
+
+  // unset($master_matr_arr['susureject']);
+  // unset($master_matr_arr['tikan']);
+  // unset($master_matr_arr['troti']);
+  //
+
+} elseif ($pig_target == 'bunting') {
+  $protein_min = 12; //14.3
+  $protein_max = 18;
+  $karbo_min = 50; //58.9
+  $karbo_max = 58;
+  // $price_max = 6500;
+
+  // not used materials
+  unset($master_matr_arr['pur551']);
+  unset($master_matr_arr['kons152']);
+  // unset($master_matr_arr['tikan']);
+  //
+
+} elseif ($pig_target == 'nyusui') {
+  $protein_min = 14; //16.2
+  $protein_max = 18;
+  $karbo_min = 50; //57.4
+  $karbo_max = 58;
+  // $price_max = 6500;
+
+  // not used materials
+  unset($master_matr_arr['pur551']);
+  unset($master_matr_arr['kons152']);
+  // unset($master_matr_arr['tikan']);
+  //
+
+}
+if ($protein_min < 1 || $protein_max < 1 || $karbo_min < 1 || $karbo_max < 1) print_rdie("FATAL ERROR: \$pig_target $pig_target");
+
+
+
+
+$pop_num = 100; // maximum agents in population
+$max_gen = 100; // maximum generation loop
+// $max_gen_delta = (int) round($max_gen * .01);
+$max_gen_delta = 5;
+
+$main_pop = array();
+$sel_pop = array();
+
+// generate random agents
+$main_pop = ga_init_pop($pop_num);
+// ga_sort_population($main_pop);
+
+// sort ascending, lowest fitness at front
+ga_sort_population($main_pop);
+
+
+// pre
+$pre_best_fit = PHP_INT_MAX;
+$unchanged_loop = 0;
+
+for ($gen_loop = 0; $gen_loop < $max_gen; $gen_loop++) {
+  // select + tournament
+  $mate_pop = ga_select($main_pop);
+
+  // crossover
+  $cr_pop = ga_crossover($mate_pop);
+  // print_rdie($cr_pop);
+
+  // mutation
+  $mu_pop1 = ga_mutation($mate_pop, 'mate');
+  $mu_pop2 = ga_mutation($cr_pop, 'cr');
+  // print_rdie($mu_pop2);
+
+  // merge all ops
+  $res_pop = array_merge($cr_pop, $mu_pop1, $mu_pop2);
+  ga_compute_population($res_pop);
+
+  // merge main pop, delete bad agents
+  $new_good = ga_merge_main_population($main_pop, $res_pop);
+  // print_rdie($main_pop[0]);
+
+  // auto extend loop
+  // if ($new_good > 0) $max_gen = (int) round($max_gen * 1.05);
+  if ($new_good > 0) {
+    $max_gen += $max_gen_delta * $new_good;
+    $unchanged_loop -= 100;
+  }
+
+  // ga_sort_population($main_pop);
+
+  // best agent
+  $agent_best = $main_pop[0];
+  $best_fitness = round((float) $agent_best['fitness'], 5);
+  $best_price = (float) $agent_best['price_per_kg'];
+  $best_price = round($best_price);
+
+  // worst agent
+  $last_idx = array_key_last($main_pop);
+  $agent_worst = $main_pop[$last_idx];
+  $worst_fitness = round((float) $agent_worst['fitness'], 5);
+  $worst_price = (float) $agent_worst['price_per_kg'];
+  $worst_price = round($worst_price);
+
+  echo "\n LOOP=$gen_loop of $max_gen \tbest=$best_price,$best_fitness \tworst=$worst_price,$worst_fitness";
+  // print_r(array_keys($main_pop));
+
+  $del_price = abs($best_price - $worst_price);
+  $del_fitness = abs($best_fitness - $worst_fitness);
+  if (is_zero($del_fitness)) break;
+
+  if (!is_zero($worst_fitness)) {
+    $pro_fitness = (float) abs($del_fitness / $worst_fitness * 100);
+    if ($pro_fitness < 5) break;
+  }
+
+  // check if best fitness not changed after N loop
+  $del_fit_pre = abs($pre_best_fit - $best_fitness);
+  if (!is_zero($del_fit_pre)) {
+    $unchanged_loop = 0;
+    $pre_best_fit = $best_fitness;
+  } else {
+    $unchanged_loop++;
+    if ($unchanged_loop > 1000) break;
+  }
+}
+
+echo "\n";
+// print_r($main_pop[1]);
+print_r($main_pop[0]);
+
+echo "\n\n--- PIG TARGET: $pig_target ";
+ga_print_pop($main_pop, 5);
+// ga_print_agent($main_pop[1]);
+// ga_print_agent($main_pop[0]);
+
+echo "\n\n--- PIG TARGET: $pig_target \n";
