@@ -54,7 +54,7 @@ function ga_compute_agent_fitness(array &$aagent)
     // $aagent['fitness'] = PHP_INT_MAX;
     // print_rdie($aagent);
     // return;
-    $fit_mul *= 2000;
+    $fit_mul *= 2;
     $str_mul[] = 'sumpart-many';
   }
 
@@ -63,7 +63,7 @@ function ga_compute_agent_fitness(array &$aagent)
     // $aagent['fitness'] = PHP_INT_MAX;
     // print_rdie($aagent);
     // return;
-    $fit_mul *= 200;
+    $fit_mul *= 2;
     $str_mul[] = 'sumpart-few';
   }
 
@@ -72,7 +72,7 @@ function ga_compute_agent_fitness(array &$aagent)
     // $aagent['fitness'] = PHP_INT_MAX;
     // print_rdie($aagent);
     // return;
-    $fit_mul *= 200;
+    $fit_mul *= 2;
     $str_mul[] = 'minperc';
   }
 
@@ -90,7 +90,7 @@ function ga_compute_agent_fitness(array &$aagent)
     // $aagent['fitness'] = PHP_INT_MAX;
     // print_rdie($aagent);
     // return;
-    $fit_mul *= 20;
+    $fit_mul *= 2;
     $str_mul[] = 'serat-max';
   }
 
@@ -99,7 +99,7 @@ function ga_compute_agent_fitness(array &$aagent)
     // $aagent['fitness'] = PHP_INT_MAX;
     // print_rdie($aagent);
     // return;
-    $fit_mul *= 20;
+    $fit_mul *= 30;
     $str_mul[] = 'prote-min';
     //
 
@@ -108,7 +108,7 @@ function ga_compute_agent_fitness(array &$aagent)
     // $aagent['fitness'] = PHP_INT_MAX;
     // print_rdie($aagent);
     // return;
-    $fit_mul *= 3000;
+    $fit_mul *= 300;
     $str_mul[] = 'prote-max';
   }
 
@@ -117,7 +117,7 @@ function ga_compute_agent_fitness(array &$aagent)
     // $aagent['fitness'] = PHP_INT_MAX;
     // print_rdie($aagent);
     //return;
-    $fit_mul *= 200;
+    $fit_mul *= 40;
     $str_mul[] = 'karbo-min';
     //
 
@@ -126,7 +126,7 @@ function ga_compute_agent_fitness(array &$aagent)
     // $aagent['fitness'] = PHP_INT_MAX;
     // print_rdie($aagent);
     //return;
-    $fit_mul *= 3000;
+    $fit_mul *= 400;
     $str_mul[] = 'karbo-max';
   }
 
@@ -135,7 +135,7 @@ function ga_compute_agent_fitness(array &$aagent)
     // $aagent['fitness'] = PHP_INT_MAX;
     // print_rdie($aagent);
     // return;
-    $fit_mul *= 50000;
+    $fit_mul *= 5000;
     $str_mul[] = 'price-max';
     //
 
@@ -191,10 +191,10 @@ function ga_compute_agent_fitness(array &$aagent)
         continue;
       //
       elseif ($aperc < $amin_perc && !is_zero($amin_perc)) {
-        $fit_mul *= 200;
+        $fit_mul *= 2;
         //
       } elseif ($aperc > $amax_perc && !is_zero($amax_perc)) {
-        $fit_mul *= 300;
+        $fit_mul *= 3;
         //
 
       }
@@ -202,12 +202,12 @@ function ga_compute_agent_fitness(array &$aagent)
 
     } else {
       if ($aperc < $amin_perc && !is_zero($amin_perc)) {
-        $fit_mul *= 2000;
+        $fit_mul *= 20;
         $str_mul[] = 'amust-too-small-' . $amat_name;
         //
 
       } elseif ($aperc > $amax_perc && !is_zero($amax_perc)) {
-        $fit_mul *= 3000;
+        $fit_mul *= 30;
         $str_mul[] = 'amust-too-big-' . $amat_name;
         //
       }
@@ -275,12 +275,12 @@ function ga_compute_agent_fitness(array &$aagent)
   $exist_crum591 = is_agent_mat_part_exists($aagent, 'crum591');
   $exist_crum592 = is_agent_mat_part_exists($aagent, 'crum592');
   if (is_ayam_starter() && $exist_crum592) {
-    $fit_mul *= 30000;
+    $fit_mul *= 90000;
     $str_mul[] = 'amust-wrong';
     //
 
   } elseif (is_ayam_grower_finisher() && $exist_crum591) {
-    $fit_mul *= 30000;
+    $fit_mul *= 90000;
     $str_mul[] = 'amust-wrong';
     //
   }
@@ -306,7 +306,7 @@ function ga_compute_agent_fitness(array &$aagent)
   // make sure always bigger 1000 for division rounding at fitness below
   if ($aagent['price_per_kg'] < 1000) {
     $aagent['err'] = 'price too LOW';
-    $fit_mul *= 50000000;
+    $fit_mul *= 90000000;
     $str_mul[] = 'price-min';
   }
 

@@ -21,11 +21,8 @@ global $susu_max, $roti_max, $khijau_max;
 // print_rdie($master_matr_arr);
 
 // starter, grower, finisher, bunting, nyusui
-$ayam_target = 'bunting';
-// $ayam_target = 'nyusui';
 // $ayam_target = 'starter';
-// $ayam_target = 'grower';
-// $ayam_target = 'finisher';
+$ayam_target = 'finisher';
 
 // print_rdie($argv);
 if (isset($argv[1])) $ayam_target = strtolower($argv[1]);
