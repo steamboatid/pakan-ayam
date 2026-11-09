@@ -17,7 +17,6 @@ function ga_compute_agent_fitness(array &$aagent)
 {
   global $protein_min, $protein_max, $karbo_min, $karbo_max, $price_max;
   global $lemak_max, $serat_max;
-  global $susu_max, $roti_max, $khijau_max;
   global $master_matr_arr, $def_mix_cap;
 
 
@@ -31,7 +30,7 @@ function ga_compute_agent_fitness(array &$aagent)
   $str_mul = array();
 
   // bad agents
-  if (!is_pig_starter() && $aagent['non_zero'] <= 4) {
+  if (!is_ayam_starter() && $aagent['non_zero'] <= 4) {
     $aagent['err'] = 'non zero <= 4 ';
     // $aagent['fitness'] = PHP_INT_MAX;
     // print_rdie($aagent);
@@ -68,7 +67,7 @@ function ga_compute_agent_fitness(array &$aagent)
     $str_mul[] = 'sumpart-few';
   }
 
-  if ($aagent['min_percent'] < 5) {
+  if ($aagent['min_percent'] < 3) {
     $aagent['err'] = 'too small percent';
     // $aagent['fitness'] = PHP_INT_MAX;
     // print_rdie($aagent);
@@ -153,25 +152,67 @@ function ga_compute_agent_fitness(array &$aagent)
 
   $non_zero = (int) $aagent['non_zero'];
   $matr_names = array_keys($master_matr_arr);
-  if ($non_zero > 2)
-    foreach ($matr_names as $amat_name) {
-      if (stristr($amat_name, 'pur') || stristr($amat_name, 'kons')) continue;
+  // if ($non_zero > 2)
+  //   foreach ($matr_names as $amat_name) {
+  //     if (stristr($amat_name, 'crum')) continue;
 
-      $aperc = 0;
-      if (isset($aagent['mats'][$amat_name]['part_percent']))
-        $aperc = $aagent['mats'][$amat_name]['part_percent'];
+  //     $aperc = 0;
+  //     if (isset($aagent['mats'][$amat_name]['part_percent']))
+  //       $aperc = $aagent['mats'][$amat_name]['part_percent'];
 
-      if (is_zero($aperc)) continue;
+  //     if (is_zero($aperc)) continue;
 
-      if ($aperc < 5) { // too small
-        $fit_mul *= 20000;
-        $str_mul[] = 'mat-too-small-' . $amat_name;
-      } 
-      elseif ($aperc > 50) { // too big
-        $fit_mul *= 30000;
-        $str_mul[] = 'mat-too-high-' . $amat_name;
+  //     if ($aperc < 3) { // too small
+  //       $fit_mul *= 20000;
+  //       $str_mul[] = 'mat-too-small-' . $amat_name;
+  //     } elseif ($aperc > 60) { // too big
+  //       $fit_mul *= 30000;
+  //       $str_mul[] = 'mat-too-high-' . $amat_name;
+  //     }
+  //   }
+
+
+  foreach ($matr_names as $amat_name) {
+    $apart = 0;
+    $aperc = 0;
+    if (isset($aagent['mats'][$amat_name]['part_percent']))
+      $aperc = $aagent['mats'][$amat_name]['part_percent'];
+    if (isset($aagent['mats'][$amat_name]['part']))
+      $apart = $aagent['mats'][$amat_name]['part'];
+    // print_rdie($aagent['mats'][$amat_name]);
+
+    $aamust = (int) $master_matr_arr[$amat_name]['amust'];
+    $amax_perc = (float) $master_matr_arr[$amat_name]['maxperc'];
+    $amin_perc = (float) $master_matr_arr[$amat_name]['minperc'];
+    // print_rdie($master_matr_arr[$amat_name]);
+
+    if ($aamust < 1) {
+      if (is_zero($apart) || is_zero($aperc))
+        continue;
+      //
+      elseif ($aperc < $amin_perc && !is_zero($amin_perc)) {
+        $fit_mul *= 200;
+        //
+      } elseif ($aperc > $amax_perc && !is_zero($amax_perc)) {
+        $fit_mul *= 300;
+        //
+
+      }
+      //
+
+    } else {
+      if ($aperc < $amin_perc && !is_zero($amin_perc)) {
+        $fit_mul *= 2000;
+        $str_mul[] = 'amust-too-small-' . $amat_name;
+        //
+
+      } elseif ($aperc > $amax_perc && !is_zero($amax_perc)) {
+        $fit_mul *= 3000;
+        $str_mul[] = 'amust-too-big-' . $amat_name;
+        //
       }
     }
+  }
 
   // if ($non_zero > 2 && $non_zero <= 6) {
   //   $fit_mul *= 0.5;
@@ -183,45 +224,8 @@ function ga_compute_agent_fitness(array &$aagent)
 
 
 
-  // // special good
-  // if (is_zero(abs($fit_mul - 1.0))) {
-  //   // tikan
-  //   $amat_name = 'tikan';
-  //   // if (!is_pig_sow())
-  //   if (
-  //     isset($aagent['mats'][$amat_name]) &&
-  //     $aagent['mats'][$amat_name]['part'] > 0 && $aagent['mats'][$amat_name]['part_percent'] > 5
-  //   ) {
-  //     $fit_mul *= 0.5;
-  //     $str_mul[] = 'tikan>5%';
-  //   }
-  // }
 
-
-  // // bkedelai
-  // $amat_name = 'bkedelai';
-  // if (!is_pig_sow())
-  //   if (
-  //     isset($aagent['mats'][$amat_name]) &&
-  //     $aagent['mats'][$amat_name]['part'] > 0 && $aagent['mats'][$amat_name]['part_percent'] > 5
-  //   ) {
-  //     $fit_mul *= 0.5;
-  //     $str_mul[] = 'bkedelai>5%';
-  //   }
-
-  // // troti
-  // $amat_name = 'troti';
-  // // if (!is_pig_sow())
-  // if (
-  //   isset($aagent['mats'][$amat_name]) &&
-  //   $aagent['mats'][$amat_name]['part'] > 0 && $aagent['mats'][$amat_name]['part_percent'] > 5
-  // ) {
-  //   $fit_mul *= 2;
-  //   $str_mul[] = 'troti>5%';
-  // }
-
-
-
+  /*
   // bekatul
   $amat_name = 'bekatul';
   if (
@@ -261,44 +265,39 @@ function ga_compute_agent_fitness(array &$aagent)
     $fit_mul *= 0.5;
     $str_mul[] = 'tkedelai>3%';
   }
+  //*/
+
+  //print_rdie($aagent);
 
 
 
   // check amust part
-  $exist_kons152 = is_agent_mat_part_exists($aagent, 'kons152');
-  $exist_kons157 = is_agent_mat_part_exists($aagent, 'kons157');
-  $exist_pur551 = is_agent_mat_part_exists($aagent, 'pur551');
-  if (is_pig_starter() && ($exist_kons152 || $exist_kons157)) {
+  $exist_crum591 = is_agent_mat_part_exists($aagent, 'crum591');
+  $exist_crum592 = is_agent_mat_part_exists($aagent, 'crum592');
+  if (is_ayam_starter() && $exist_crum592) {
     $fit_mul *= 30000;
     $str_mul[] = 'amust-wrong';
     //
 
-  } elseif (is_pig_grower_finisher() && $exist_pur551) {
+  } elseif (is_ayam_grower_finisher() && $exist_crum591) {
     $fit_mul *= 30000;
     $str_mul[] = 'amust-wrong';
     //
-
-  } elseif (is_pig_sow() && ($exist_kons152 || $exist_pur551)) {
-    $fit_mul *= 30000;
-    $str_mul[] = 'amust-wrong';
   }
 
 
   $amust_part = 0.0;
-  if (is_pig_starter()) $amust_part = (float) $aagent['mats']['pur551']['part'];
-  elseif (is_pig_grower_finisher()) $amust_part = (float) $aagent['mats']['kons152']['part'];
-  elseif (is_pig_sow()) $amust_part = (float) $aagent['mats']['kons157']['part'];
+  if (is_ayam_starter()) $amust_part = (float) $aagent['mats']['crum591']['part'];
+  elseif (is_ayam_grower_finisher()) $amust_part = (float) $aagent['mats']['crum592']['part'];
 
   $amust_perc = 0.0;
-  if (is_pig_starter()) $amust_perc = (float) $aagent['mats']['pur551']['part_percent'];
-  elseif (is_pig_grower_finisher()) $amust_perc = (float) $aagent['mats']['kons152']['part_percent'];
-  elseif (is_pig_sow()) $amust_perc = (float) $aagent['mats']['kons157']['part_percent'];
+  if (is_ayam_starter()) $amust_perc = (float) $aagent['mats']['crum591']['part_percent'];
+  elseif (is_ayam_grower_finisher()) $amust_perc = (float) $aagent['mats']['crum592']['part_percent'];
   // print_rdie($amust_perc);
-  if (is_pig_starter() && $amust_perc > 50) {
+  if (is_ayam_starter() && $amust_perc > 50) {
     $fit_mul *= 3;
     $str_mul[] = 'amust-perc-many';
-  }
-  elseif ($amust_perc > 20) {
+  } elseif ($amust_perc > 20) {
     $fit_mul *= 3;
     $str_mul[] = 'amust-perc-many';
   }
@@ -313,16 +312,16 @@ function ga_compute_agent_fitness(array &$aagent)
 
 
   $karbo_protein = 1.0;
-  if (is_pig_starter())
+  if (is_ayam_starter())
     $karbo_protein = (round($aagent['protein'], 0) * 5) + (round($aagent['karbo'], 0) * 1);
-  elseif (is_pig_grower())
+  elseif (is_ayam_grower())
     $karbo_protein = round($aagent['protein'], 0) + (round($aagent['karbo'], 0) * 2);
-  elseif (is_pig_finisher())
+  elseif (is_ayam_finisher())
     $karbo_protein = round($aagent['protein'], 0) + (round($aagent['karbo'], 0) * 5);
-  elseif (is_pig_sow())
-    $karbo_protein = (round($aagent['protein'], 0) * 2) + (round($aagent['karbo'], 0) * 1);
+  // elseif (is_ayam_sow())
+  //   $karbo_protein = (round($aagent['protein'], 0) * 2) + (round($aagent['karbo'], 0) * 1);
 
-  $karbo_protein= round($karbo_protein, 1);
+  $karbo_protein = round($karbo_protein, 1);
 
 
   $lemak_serat = $aagent['serat'] + $aagent['lemak'];
@@ -336,10 +335,10 @@ function ga_compute_agent_fitness(array &$aagent)
   // $fitness = $aagent['price_per_kg'] * $lemak_serat * $amust_part * $aagent['non_zero'] * $aagent['avg_part'] * $aagent['sum_part']  / ($aagent['protein'] + $aagent['karbo']);
   // $fitness = $aagent['price_per_kg'] / ($aagent['karbo']);
 
-  $price_near = round($aagent['price_per_kg']/1000, 1);
-  $price_sq = round(pow($price_near, 2), 2);
+  $price_near = round($aagent['price_per_kg'] / 1000, 1);
+  $price_pow = round(pow($price_near, 2), 2);
 
-  $fitness = $price_sq * $parts_config / $karbo_protein * $fit_mul;
+  $fitness = $price_pow * $parts_config / $karbo_protein * $fit_mul;
   $aagent['fitness'] = $fitness;
 
   // dbg fit_mul
@@ -432,7 +431,7 @@ function ga_compute_agent_nutrition_percent(array &$aagent)
 
 function ga_init_agent(array $aref = array(), float $min_part = 0.0): array
 {
-  global $master_matr_arr, $def_mix_cap, $pig_target;
+  global $master_matr_arr, $def_mix_cap, $ayam_target;
 
   $aref_ops = isset($aref['ops']) ? $aref['ops'] : '';
 
@@ -471,24 +470,17 @@ function ga_init_agent(array $aref = array(), float $min_part = 0.0): array
   foreach ($matr_arr_idx as $amat_name) {
     $aagent_mats[$amat_name] = array();
 
-    if (is_pig_starter()) {
-      if ($amat_name == 'pur551') $apart = 1;
-      elseif (stristr($amat_name, 'kons')) $apart = 0;
-      else $apart = random_float($min_part, 2);
-      //
-
-    } elseif (is_pig_sow()) {
-      if ($amat_name == 'kons157') $apart = 1;
-      elseif (stristr($amat_name, 'kons') || stristr($amat_name, 'pur')) $apart = 0;
+    if (is_ayam_starter()) {
+      if ($amat_name == 'crum591') $apart = 1;
+      elseif (stristr($amat_name, 'crum')) $apart = 0;
       else $apart = random_float($min_part, 2);
       //
 
     } else { // finisher, grower
-      if ($amat_name == 'kons152') $apart = 1;
-      elseif (stristr($amat_name, 'kons') || stristr($amat_name, 'pur')) $apart = 0;
+      if ($amat_name == 'crum592') $apart = 1;
+      elseif (stristr($amat_name, 'crum')) $apart = 0;
       else $apart = random_float($min_part, 2);
       //
-
     }
     // if ($non_zero < 3) $apart = random_int(1, 2);
 
@@ -625,13 +617,13 @@ function ga_fix_agent_mat_part(array &$aagent)
 
   $mat_names = array_keys($master_matr_arr);
   foreach ($mat_names as $amat_name) {
-    if (stristr($amat_name, 'pur') || stristr($amat_name, 'kons')) continue;
+    if (stristr($amat_name, 'crum')) continue;
 
     $aperc = 0;
     if (isset($aagent['mats'][$amat_name]['part_percent']))
       $aperc = $aagent['mats'][$amat_name]['part_percent'];
 
-    if ($aperc < 5) { // too small
+    if ($aperc < 3) { // too small
       // print_rdie($aagent);
       $aagent['mats'][$amat_name]['part'] = 0;
       $aagent['mats'][$amat_name]['part_percent'] = 0.0;
@@ -781,18 +773,13 @@ function ga_doing_crossover(array $aga, array $agb): array
     $ag3['mats'][$mat_name]['part'] = round(max($aga['mats'][$mat_name]['part'], $agb['mats'][$mat_name]['part']), 1);
     $ag4['mats'][$mat_name]['part'] = round(min($aga['mats'][$mat_name]['part'], $agb['mats'][$mat_name]['part']), 1);
 
-    // forcing pur or kons always exists
-    if ($mat_name == 'kons152' && is_pig_grower_finisher()) {
+    // forcing crum always exists
+    if ($mat_name == 'crum591' && is_ayam_grower_finisher()) {
       $ag1['mats'][$mat_name]['part'] = max($ag1['mats'][$mat_name]['part'], $amust_min);
       $ag2['mats'][$mat_name]['part'] = max($ag2['mats'][$mat_name]['part'], $amust_min);
       $ag3['mats'][$mat_name]['part'] = max($ag3['mats'][$mat_name]['part'], $amust_min);
       $ag4['mats'][$mat_name]['part'] = max($ag4['mats'][$mat_name]['part'], $amust_min);
-    } elseif ($mat_name == 'kons157' && is_pig_sow()) {
-      $ag1['mats'][$mat_name]['part'] = max($ag1['mats'][$mat_name]['part'], $amust_min);
-      $ag2['mats'][$mat_name]['part'] = max($ag2['mats'][$mat_name]['part'], $amust_min);
-      $ag3['mats'][$mat_name]['part'] = max($ag3['mats'][$mat_name]['part'], $amust_min);
-      $ag4['mats'][$mat_name]['part'] = max($ag4['mats'][$mat_name]['part'], $amust_min);
-    } elseif ($mat_name == 'pur551' && is_pig_starter()) {
+    } elseif ($mat_name == 'crum591' && is_ayam_starter()) {
       $ag1['mats'][$mat_name]['part'] = max($ag1['mats'][$mat_name]['part'], $amust_min);
       $ag2['mats'][$mat_name]['part'] = max($ag2['mats'][$mat_name]['part'], $amust_min);
       $ag3['mats'][$mat_name]['part'] = max($ag3['mats'][$mat_name]['part'], $amust_min);
@@ -880,16 +867,12 @@ function ga_mutation(array $apop, string $mut_type = ''): array
       if (is_zero($aga['mats'][$mat_name]['part'])) $ag3['mats'][$mat_name]['part'] = random_int(0, 2);
       // else $ag3['mats'][$mat_name]['part'] = 0;
 
-      // forcing pur or kons always exists
-      if ($mat_name == 'kons152' && is_pig_grower_finisher()) {
+      // forcing crum always exists
+      if ($mat_name == 'crum592' && is_ayam_grower_finisher()) {
         $ag1['mats'][$mat_name]['part'] = max($ag1['mats'][$mat_name]['part'], $amust_min);
         $ag2['mats'][$mat_name]['part'] = max($ag2['mats'][$mat_name]['part'], $amust_min);
         $ag3['mats'][$mat_name]['part'] = max($ag3['mats'][$mat_name]['part'], $amust_min);
-      } elseif ($mat_name == 'kons157' && is_pig_sow()) {
-        $ag1['mats'][$mat_name]['part'] = max($ag1['mats'][$mat_name]['part'], $amust_min);
-        $ag2['mats'][$mat_name]['part'] = max($ag2['mats'][$mat_name]['part'], $amust_min);
-        $ag3['mats'][$mat_name]['part'] = max($ag3['mats'][$mat_name]['part'], $amust_min);
-      } elseif ($mat_name == 'pur551' && is_pig_starter()) {
+      } elseif ($mat_name == 'crum591' && is_ayam_starter()) {
         $ag1['mats'][$mat_name]['part'] = max($ag1['mats'][$mat_name]['part'], $amust_min);
         $ag2['mats'][$mat_name]['part'] = max($ag2['mats'][$mat_name]['part'], $amust_min);
         $ag3['mats'][$mat_name]['part'] = max($ag3['mats'][$mat_name]['part'], $amust_min);
@@ -1109,7 +1092,7 @@ function ga_merge_main_population(array &$main_pop, array &$res_pop): int
 
 function ga_print_agent(array $aagent, string $pre = '')
 {
-  global $pig_target;
+  global $ayam_target;
 
   $the_mats = array();
   foreach ($aagent['mats'] as $mat_name => $aparts) {
@@ -1141,7 +1124,7 @@ function ga_print_agent(array $aagent, string $pre = '')
   $the_err = !empty($the_err) ? "\tErr: $the_err" : '';
   $price_kg = number_format($aagent['price_per_kg'], 0, '.', ',');
   $final = sprintf("\n%s \tProtein=%-.1f%% \tKarbo=%-.1f%% \tLemak=%-.1f%% \tSerat=%-.1f%% \tPrice=%s %s %s \n%s \n", $pre, round($aagent['protein'], 1), round($aagent['karbo'], 1), round($aagent['lemak'], 1), round($aagent['serat'], 1), $price_kg, $the_err, $aagent['str_mul'], $the_mats);
-  $final = "\n\n--- PIG TARGET: $pig_target $final";
+  $final = "\n\n--- AYAM TARGET: $ayam_target $final";
 
   echo $final;
 }
@@ -1149,7 +1132,7 @@ function ga_print_agent(array $aagent, string $pre = '')
 
 function ga_print_pop(array $apop, int $num = 3)
 {
-  for ($i = $num-1; $i >= 0; $i--) {
+  for ($i = $num - 1; $i >= 0; $i--) {
     ga_print_agent($apop[$i], strval($i + 1) . ".");
   }
 }

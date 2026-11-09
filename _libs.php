@@ -26,37 +26,38 @@ function random_float(float $min, float $max): float
   return (float) (new Random\Randomizer())->getFloat($amin, $amax);
 }
 
-function is_pig_starter(): bool
+function is_ayam_starter(): bool
 {
-  global $pig_target;
-  return $pig_target == 'starter';
+  global $ayam_target;
+  return $ayam_target == 'starter';
 }
 
-function is_pig_grower(): bool
+function is_ayam_grower(): bool
 {
-  global $pig_target;
-  return $pig_target == 'grower';
+  global $ayam_target;
+  return $ayam_target == 'grower';
 }
 
-function is_pig_finisher(): bool
+function is_ayam_finisher(): bool
 {
-  global $pig_target;
-  return $pig_target == 'finisher';
+  global $ayam_target;
+  return $ayam_target == 'finisher';
 }
 
-function is_pig_grower_finisher(): bool
+function is_ayam_grower_finisher(): bool
 {
-  global $pig_target;
-  return $pig_target == 'finisher' || $pig_target == 'grower';
+  global $ayam_target;
+  return $ayam_target == 'finisher' || $ayam_target == 'grower';
 }
 
-function is_pig_sow(): bool
-{
-  global $pig_target;
-  return $pig_target == 'sow' || $pig_target == 'bunting' || $pig_target == 'nyusui';
-}
+// function is_ayam_sow(): bool
+// {
+//   global $ayam_target;
+//   return $ayam_target == 'sow' || $ayam_target == 'bunting' || $ayam_target == 'nyusui';
+// }
 
-function is_agent_mat_part_exists(array $aagent, string $amat_name = 'kons152'): bool
+// crum591, crum592
+function is_agent_mat_part_exists(array $aagent, string $amat_name = 'crum591'): bool
 {
   if (!isset($aagent['mats'])) return false;
   if (!isset($aagent['mats'][$amat_name])) return false;

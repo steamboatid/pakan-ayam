@@ -3,35 +3,27 @@
 // include __DIR__ . "/_libs.php";
 
 $ori_master_matr_arr = array(
-	'kons152' => array(
-		12000, //harga
-		41, //protein
-		26.4, //karbo
+	'crum592' => array( //ayam grower finisher
+		16000, //harga
+		16, //protein
+		0, //karbo
 		3, //lemak
-		8, //serat
+		7, //serat
 		0, //lain-lain
 		1, //is_amust
-		0 //max percent (1-100)
+		5, //max percent (1-100)
+		1, //min percent (1-100), must > 0
 	),
-	'kons157' => array(
-		13000, //harga
-		41, //protein
-		26.4, //karbo
-		3, //lemak
-		8, //serat
+	'crum591' => array( //ayam starter
+		16000, //harga
+		22, //protein
+		0, //karbo
+		5, //lemak
+		5, //serat
 		0, //lain-lain
 		1, //is_amust
-		0 //max percent (1-100)
-	),
-	'pur551' => array(
-		13000, //harga
-		19.5, //protein
-		59.9, //karbo
-		4, //lemak
-		6, //serat
-		0, //lain-lain
-		1, //is_amust
-		0 //max percent (1-100)
+		5, //max percent (1-100)
+		1, //min percent (1-100), must > 0
 	),
 
 	'jagung' => array(
@@ -42,7 +34,8 @@ $ori_master_matr_arr = array(
 		2.5, //serat
 		0, //lain-lain
 		0, //amust
-		0 //max percent (1-100)
+		0, //max percent (1-100)
+		0, //min percent (1-100)
 	),
 	'bekatul' => array(
 		7000, //harga
@@ -52,7 +45,8 @@ $ori_master_matr_arr = array(
 		14, //serat
 		0, //lain-lain
 		0, //amust
-		0 //max percent (1-100)
+		0, //max percent (1-100)
+		0, //min percent (1-100)
 	),
 
 	'tgaplek' => array(
@@ -63,25 +57,9 @@ $ori_master_matr_arr = array(
 		3, //serat
 		0, //lain-lain
 		0, //amust
-		0 //max percent (1-100)
+		0, //max percent (1-100)
+		10, //min percent (1-100)
 	),
-
-	// 'tkachijau' => array(
-	// 	5500, // was= 5000
-	// 	23,
-	// 	46,
-	// 	1.3,
-	// 	16,
-	// 	0
-	// ),
-	// 'tkupkachijau' => array(
-	// 	5000, // was= 5000
-	// 	11,
-	// 	55,
-	// 	1.5,
-	// 	18,
-	// 	0
-	// ),
 
 	'troti' => array(
 		4500, //harga			was 5000
@@ -91,7 +69,8 @@ $ori_master_matr_arr = array(
 		4.25, //serat
 		0, //lain-lain
 		0, //amust
-		0 //max percent (1-100)
+		0, //max percent (1-100)
+		10, //min percent (1-100)
 	),
 	'tikan' => array(
 		7500, //harga
@@ -101,7 +80,8 @@ $ori_master_matr_arr = array(
 		2, //serat
 		0, //lain-lain
 		0, //amust
-		0 //max percent (1-100)
+		0, //max percent (1-100)
+		0, //min percent (1-100)
 	),
 	'susureject' => array(
 		5000, //harga			was 5500
@@ -111,7 +91,8 @@ $ori_master_matr_arr = array(
 		2, //serat
 		0, //lain-lain
 		0, //amust
-		0 //max percent (1-100)
+		0, //max percent (1-100)
+		0, //min percent (1-100)
 	),
 	'tkedelai' => array(
 		7000, //harga
@@ -121,7 +102,8 @@ $ori_master_matr_arr = array(
 		9.6, //serat
 		0, //lain-lain
 		0, //amust
-		0 //max percent (1-100)
+		0, //max percent (1-100)
+		0, //min percent (1-100)
 	),
 
 	'tmie' => array(
@@ -132,7 +114,8 @@ $ori_master_matr_arr = array(
 		1.4, //serat
 		0, //lain-lain
 		0, //amust
-		0 //max percent (1-100)
+		0, //max percent (1-100)
+		10, //min percent (1-100)
 	),
 	'trajukerang' => array(
 		3000, //harga
@@ -142,7 +125,8 @@ $ori_master_matr_arr = array(
 		15, //serat
 		0, //lain-lain
 		0, //amust
-		5 //max percent (1-100)
+		5, //max percent (1-100)
+		0, //min percent (1-100)
 	),
 	'tkangkung' => array(
 		3000, //harga
@@ -152,7 +136,8 @@ $ori_master_matr_arr = array(
 		16.5, //serat
 		0, //lain-lain
 		0, //amust
-		5 //max percent (1-100)
+		5, //max percent (1-100)
+		0, //min percent (1-100)
 	),
 	'tsawit' => array(
 		3000, //harga
@@ -162,7 +147,8 @@ $ori_master_matr_arr = array(
 		16, //serat
 		0, //lain-lain
 		0, //amust
-		5 //max percent (1-100)
+		5, //max percent (1-100)
+		0, //min percent (1-100)
 	),
 );
 
@@ -188,6 +174,10 @@ foreach ($ori_master_matr_arr as $nama_bahan => $aa) {
 
 	// max percent
 	if (isset($aa[7])) $a['maxperc'] = (float) $aa[7];
+	else $a['maxperc'] = 0;
+
+	// min percent
+	if (isset($aa[8])) $a['minperc'] = (float) $aa[8];
 	else $a['maxperc'] = 0;
 
 	$master_matr_arr[$nama_bahan] = $a;
