@@ -314,8 +314,8 @@ function ga_compute_agent_fitness(array &$aagent)
   $karbo_protein = 1.0;
   if (is_ayam_starter())
     $karbo_protein = (round($aagent['protein'], 0) * 5) + (round($aagent['karbo'], 0) * 1);
-  elseif (is_ayam_grower())
-    $karbo_protein = round($aagent['protein'], 0) + (round($aagent['karbo'], 0) * 2);
+  // elseif (is_ayam_grower())
+  //   $karbo_protein = round($aagent['protein'], 0) + (round($aagent['karbo'], 0) * 2);
   elseif (is_ayam_finisher())
     $karbo_protein = round($aagent['protein'], 0) + (round($aagent['karbo'], 0) * 5);
   // elseif (is_ayam_sow())
@@ -338,8 +338,8 @@ function ga_compute_agent_fitness(array &$aagent)
   $price_near = round($aagent['price_per_kg'] / 1000, 1);
   $price_pow = round(pow($price_near, 2), 2);
 
-  $fitness = $price_pow * $parts_config / $karbo_protein * $fit_mul;
-  $aagent['fitness'] = $fitness;
+  $fitness = $price_pow * $parts_config / $karbo_protein * $lemak_serat * $fit_mul;
+  $aagent['fitness'] = round($fitness, 3);
 
   // dbg fit_mul
   $aagent['str_mul'] = implode(', ', $str_mul);

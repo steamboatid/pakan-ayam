@@ -32,11 +32,11 @@ function is_ayam_starter(): bool
   return $ayam_target == 'starter';
 }
 
-function is_ayam_grower(): bool
-{
-  global $ayam_target;
-  return $ayam_target == 'grower';
-}
+// function is_ayam_grower(): bool
+// {
+//   global $ayam_target;
+//   return $ayam_target == 'grower';
+// }
 
 function is_ayam_finisher(): bool
 {
