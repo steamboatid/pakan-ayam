@@ -894,8 +894,8 @@ function ga_mutation(array $apop, string $mut_type = ''): array
 
     // forcing bkedeleai
     $mat_name = 'bkedeleai';
-    if (isset($ag4['mats'][$mat_name])) {
-      $ag4['mats'][$mat_name]['part'] = random_float(0.5, 2.1);
+    if (isset($ag5['mats'][$mat_name])) {
+      $ag5['mats'][$mat_name]['part'] = random_float(0.5, 2.1);
     }
 
     foreach ($matr_arr_idx as $mat_name) {
@@ -910,7 +910,7 @@ function ga_mutation(array $apop, string $mut_type = ''): array
     $ag2['non_zero'] = $non_zero2;
     $ag3['non_zero'] = $non_zero3;
     $ag4['non_zero'] = $non_zero4;
-    $ag4['non_zero'] = $non_zero5;
+    $ag5['non_zero'] = $non_zero5;
 
     $ag1['ops'] = "mutation: $mut_type";
     $ag2['ops'] = "mutation: $mut_type";
