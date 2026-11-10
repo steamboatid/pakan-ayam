@@ -31,8 +31,8 @@ $protein_min = 0;
 $protein_max = 0;
 $karbo_min = 0;
 $karbo_max = 0;
-$lemak_max = 5;
-$serat_max = 5;
+$lemak_max = 7;
+$serat_max = 7;
 
 // $susu_max = 30;
 // $roti_max = 30;
@@ -48,13 +48,20 @@ if ($ayam_target == 'starter') {
   $protein_max = 23;
   $karbo_min = 54;
   $karbo_max = 60;
-  $lemak_max = 5;
-  $serat_max = 5;
+  // $lemak_max = 5;
+  // $serat_max = 5;
   // $price_max = 7000;
 
   // not used materials
   // unset($master_matr_arr['tikan']);
   unset($master_matr_arr['crum592']);
+
+  unset($master_matr_arr['tgaplek']);
+  unset($master_matr_arr['troti']);
+  unset($master_matr_arr['jagung']);
+  unset($master_matr_arr['bekatul']);
+  unset($master_matr_arr['tkedelai']);
+  unset($master_matr_arr['tsawit']);
   //
 
 } elseif ($ayam_target == 'finisher') {
@@ -63,12 +70,20 @@ if ($ayam_target == 'starter') {
   $protein_max = 20;
   $karbo_min = 60;
   $karbo_max = 100;
-  $lemak_max = 6;
-  $serat_max = 6;
+  // $lemak_max = 6;
+  // $serat_max = 6;
   // $price_max = 6500;
 
   // not used materials
   unset($master_matr_arr['crum591']);
+
+  unset($master_matr_arr['tgaplek']);
+  unset($master_matr_arr['troti']);
+  unset($master_matr_arr['jagung']);
+  unset($master_matr_arr['bekatul']);
+  unset($master_matr_arr['tkedelai']);
+  unset($master_matr_arr['tsawit']);
+  unset($master_matr_arr['crum592']);
   //
 
 }

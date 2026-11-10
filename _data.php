@@ -107,7 +107,7 @@ $ori_master_matr_arr = array(
 	),
 
 	'tmie' => array(
-		4000, //harga
+		7000, //harga
 		10.5, //protein
 		64, //karbo
 		13.5, //lemak
@@ -148,6 +148,19 @@ $ori_master_matr_arr = array(
 		0, //lain-lain
 		0, //amust
 		5, //max percent (1-100)
+		0, //min percent (1-100)
+	),
+
+	// bahan mamel
+	'gamblong' => array(
+		1500, //harga
+		2, //protein
+		78, //karbo
+		1, //lemak
+		5, //serat, 15
+		0, //lain-lain
+		0, //amust
+		0, //max percent (1-100)
 		0, //min percent (1-100)
 	),
 );

@@ -30,13 +30,13 @@ function ga_compute_agent_fitness(array &$aagent)
   $str_mul = array();
 
   // bad agents
-  if (!is_ayam_starter() && $aagent['non_zero'] <= 4) {
-    $aagent['err'] = 'non zero <= 4 ';
+  if (!is_ayam_starter() && $aagent['non_zero'] <= 2) {
+    $aagent['err'] = 'non zero <= 2 ';
     // $aagent['fitness'] = PHP_INT_MAX;
     // print_rdie($aagent);
     // return;
     $fit_mul *= 2;
-    $str_mul[] = 'nonzero <= 4';
+    $str_mul[] = 'nonzero <= 2';
     //
 
   }
@@ -287,12 +287,12 @@ function ga_compute_agent_fitness(array &$aagent)
 
 
   $amust_part = 0.0;
-  if (is_ayam_starter()) $amust_part = (float) $aagent['mats']['crum591']['part'];
-  elseif (is_ayam_grower_finisher()) $amust_part = (float) $aagent['mats']['crum592']['part'];
+  if (is_ayam_starter()) $amust_part = (float) ($aagent['mats']['crum591']['part']?? 0.0);
+  elseif (is_ayam_grower_finisher()) $amust_part = (float) ($aagent['mats']['crum592']['part']?? 0.0);
 
   $amust_perc = 0.0;
-  if (is_ayam_starter()) $amust_perc = (float) $aagent['mats']['crum591']['part_percent'];
-  elseif (is_ayam_grower_finisher()) $amust_perc = (float) $aagent['mats']['crum592']['part_percent'];
+  if (is_ayam_starter()) $amust_perc = (float) ($aagent['mats']['crum591']['part_percent'] ?? 0.0);
+  elseif (is_ayam_grower_finisher()) $amust_perc = (float) ($aagent['mats']['crum592']['part_percent'] ?? 0.0);
   // print_rdie($amust_perc);
   if (is_ayam_starter() && $amust_perc > 50) {
     $fit_mul *= 3;
