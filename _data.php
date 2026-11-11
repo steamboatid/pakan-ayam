@@ -74,7 +74,7 @@ $ori_master_matr_arr = array(
 
 
 	'tgaplek' => array(
-		4500, //harga 			was 8000
+		6500, //harga 			was 8000
 		2, //protein
 		82, //karbo
 		1, //lemak
@@ -94,7 +94,7 @@ $ori_master_matr_arr = array(
 		0, //lain-lain
 		0, //amust
 		0, //max percent (1-100)
-		0, //min percent (1-100)
+		1, //min percent (1-100)
 	),
 	'tikan' => array(
 		7500, //harga
@@ -131,7 +131,7 @@ $ori_master_matr_arr = array(
 	),
 
 	'tmie' => array(
-		7000, //harga
+		7500, //harga
 		10.5, //protein
 		64, //karbo
 		13.5, //lemak
@@ -246,3 +246,4 @@ foreach ($ori_master_matr_arr as $nama_bahan => $aa) {
 }
 
 // print_rdie($master_matr_arr);
+

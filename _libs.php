@@ -98,11 +98,17 @@ function round_near(float $number, float $near = 1000): float
 function is_mat_for_starter(string $mat_name)
 {
   $mat_name = strtolower($mat_name);
-  return $mat_name == 'crum591';
+  return $mat_name == 'crum591' || $mat_name == 'pur551';
 }
 
 function is_mat_for_grower_finisher(string $mat_name)
 {
   $mat_name = strtolower($mat_name);
-  return $mat_name == 'crum592' || $mat_name == 'cp112';
+  return $mat_name == 'crum592' || $mat_name == 'kons152';
+}
+
+function is_mat_for_sow(string $mat_name)
+{
+  $mat_name = strtolower($mat_name);
+  return $mat_name == 'kons157';
 }

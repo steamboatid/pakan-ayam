@@ -20,7 +20,7 @@ global $susu_max, $roti_max, $khijau_max;
 
 // print_rdie($master_matr_arr);
 
-// starter, grower, finisher, bunting, nyusui
+// starter, finisher
 // $ayam_target = 'starter';
 $ayam_target = 'finisher';
 

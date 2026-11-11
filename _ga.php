@@ -77,7 +77,7 @@ function ga_compute_agent_fitness(array &$aagent)
     $str_mul[] = 'sumpart-few';
   }
 
-  // percent too small
+  // min percent too small
   if ($aagent['min_percent'] < 5) {
     $aagent['err'] = 'too small percent';
     // $aagent['fitness'] = PHP_INT_MAX;
@@ -85,7 +85,10 @@ function ga_compute_agent_fitness(array &$aagent)
     // return;
     $fit_mul *= 200;
     $str_mul[] = 'minperc';
-  } elseif ($aagent['max_percent'] > 80) {
+  }
+
+  // max percent too big
+  if ($aagent['max_percent'] > 80) {
     $aagent['err'] = 'too big percent';
     // $aagent['fitness'] = PHP_INT_MAX;
     // print_rdie($aagent);
@@ -926,7 +929,7 @@ function ga_mutation(array $apop, string $mut_type = ''): array
     $ag5 = $aga; // multiply by 1.1-2.0
 
     $ag_tikan = $aga; // forcing tikan
-    $ag_bkedelai = $aga; // forcing bkedeleai
+    $ag_tkedelai = $aga; // forcing tkedelai
 
     $done1 = 0;
     $done2 = 0;
@@ -1007,10 +1010,10 @@ function ga_mutation(array $apop, string $mut_type = ''): array
       $ag_tikan['mats'][$mat_name]['part'] = random_float(0.5, 2.1);
     }
 
-    // forcing bkedeleai
-    $mat_name = 'bkedeleai';
-    if (isset($ag_bkedelai['mats'][$mat_name])) {
-      $ag_bkedelai['mats'][$mat_name]['part'] = random_float(0.5, 2.1);
+    // forcing tkedelai
+    $mat_name = 'tkedelai';
+    if (isset($ag_tkedelai['mats'][$mat_name])) {
+      $ag_tkedelai['mats'][$mat_name]['part'] = random_float(0.5, 2.1);
     }
 
     // compute non_zero
@@ -1020,7 +1023,7 @@ function ga_mutation(array $apop, string $mut_type = ''): array
     $non_zero4 = 0;
     $non_zero5 = 0;
     $non_zero_tikan = 0;
-    $non_zero_bkedelai = 0;
+    $non_zero_tkedelai = 0;
 
     foreach ($matr_arr_idx as $mat_name) {
       if ($ag1['mats'][$mat_name]['part'] > 0) $non_zero1++;
@@ -1029,7 +1032,7 @@ function ga_mutation(array $apop, string $mut_type = ''): array
       if ($ag4['mats'][$mat_name]['part'] > 0) $non_zero4++;
       if ($ag5['mats'][$mat_name]['part'] > 0) $non_zero5++;
       if ($ag_tikan['mats'][$mat_name]['part'] > 0) $non_zero_tikan++;
-      if ($ag_bkedelai['mats'][$mat_name]['part'] > 0) $non_zero_bkedelai++;
+      if ($ag_tkedelai['mats'][$mat_name]['part'] > 0) $non_zero_tkedelai++;
     }
 
     $ag1['non_zero'] = $non_zero1;
@@ -1038,7 +1041,7 @@ function ga_mutation(array $apop, string $mut_type = ''): array
     $ag4['non_zero'] = $non_zero4;
     $ag5['non_zero'] = $non_zero5;
     $ag_tikan['non_zero'] = $non_zero_tikan;
-    $ag_bkedelai['non_zero'] = $non_zero_bkedelai;
+    $ag_tkedelai['non_zero'] = $non_zero_tkedelai;
 
     $ag1['ops'] = "mutation: $mut_type";
     $ag2['ops'] = "mutation: $mut_type";
@@ -1046,7 +1049,7 @@ function ga_mutation(array $apop, string $mut_type = ''): array
     $ag4['ops'] = "mutation: $mut_type";
     $ag5['ops'] = "mutation: $mut_type";
     $ag_tikan['ops'] = "mutation: $mut_type";
-    $ag_bkedelai['ops'] = "mutation: $mut_type";
+    $ag_tkedelai['ops'] = "mutation: $mut_type";
     // print_rdie($ag1);
     // print_rdie($ag2);
 
@@ -1057,7 +1060,7 @@ function ga_mutation(array $apop, string $mut_type = ''): array
     if ($non_zero4 > 0) $the_pop[] = $ag4;
     if ($non_zero5 > 0) $the_pop[] = $ag5;
     if ($non_zero_tikan > 0) $the_pop[] = $ag_tikan;
-    if ($non_zero_bkedelai > 0) $the_pop[] = $ag_bkedelai;
+    if ($non_zero_tkedelai > 0) $the_pop[] = $ag_tkedelai;
   }
 
   return $the_pop;
