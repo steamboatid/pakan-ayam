@@ -240,7 +240,7 @@ foreach ($ori_master_matr_arr as $nama_bahan => $aa) {
 
 	// min percent
 	if (isset($aa[8])) $a['minperc'] = (float) $aa[8];
-	else $a['maxperc'] = 0;
+	else $a['minperc'] = 0;
 
 	$master_matr_arr[$nama_bahan] = $a;
 }

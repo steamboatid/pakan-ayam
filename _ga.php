@@ -52,7 +52,7 @@ function ga_compute_agent_fitness(array &$aagent)
 
   } elseif ($aagent['non_zero'] > $nz_hi) {
     $aagent['err'] = "non zero > $nz_hi";
-    $aagent['fitness'] = PHP_INT_MAX;
+    // $aagent['fitness'] = PHP_INT_MAX;
     // print_rdie($aagent);
     // return;
     $fit_mul *= 3;
@@ -693,7 +693,7 @@ function ga_fix_agent_mat_part(array &$aagent)
 function ga_init_pop(int $num = 100): array
 {
   $agent_arr = array();
-  $fails = 0;
+  // $fails = 0;
 
   for ($i = 0; $i < $num; $i++) {
 
@@ -705,12 +705,12 @@ function ga_init_pop(int $num = 100): array
     ga_compute_agent_fitness($aagent);
     // print_rdie($aagent);
 
-    $afit = (float) $aagent['fitness'];
-    $adel = (float) abs($afit - (float) PHP_INT_MAX);
-    if (is_zero($adel)) {
-      $fails++;
-      if ($fails < $num) $num--;
-    }
+    // $afit = (float) $aagent['fitness'];
+    // $adel = (float) abs($afit - (float) PHP_INT_MAX);
+    // if (is_zero($adel)) {
+    //   $fails++;
+    //   if ($fails < $num) $num--;
+    // }
 
     $agent_arr[] = $aagent;
   }
@@ -728,12 +728,12 @@ function ga_init_pop(int $num = 100): array
     ga_compute_agent_fitness($aagent);
     // print_rdie($aagent);
 
-    $afit = (float) $aagent['fitness'];
-    $adel = (float) abs($afit - (float) PHP_INT_MAX);
-    if (is_zero($adel)) {
-      $fails++;
-      if ($fails < $num) $num--;
-    }
+    // $afit = (float) $aagent['fitness'];
+    // $adel = (float) abs($afit - (float) PHP_INT_MAX);
+    // if (is_zero($adel)) {
+    //   $fails++;
+    //   if ($fails < $num) $num--;
+    // }
 
     $agent_arr[] = $aagent;
   }
