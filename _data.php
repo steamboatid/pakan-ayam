@@ -3,8 +3,19 @@
 // include __DIR__ . "/_libs.php";
 
 $ori_master_matr_arr = array(
-	'crum592' => array( //ayam grower finisher
-		16000, //harga
+	'cp112' => array( //ayam grower finisher, buras, konsentrat
+		14000, //harga
+		38, //protein
+		33.5, //karbo
+		3, //lemak
+		6.5, //serat
+		0, //lain-lain
+		1, //is_amust
+		5, //max percent (1-100)
+		1, //min percent (1-100), must > 0
+	),
+	'crum592' => array( //ayam grower finisher, buras
+		14000, //harga
 		16, //protein
 		0, //karbo
 		3, //lemak
@@ -14,8 +25,8 @@ $ori_master_matr_arr = array(
 		5, //max percent (1-100)
 		1, //min percent (1-100), must > 0
 	),
-	'crum591' => array( //ayam starter
-		16000, //harga
+	'crum591' => array( //ayam starter, buras
+		14000, //harga
 		22, //protein
 		0, //karbo
 		5, //lemak
@@ -25,6 +36,7 @@ $ori_master_matr_arr = array(
 		5, //max percent (1-100)
 		1, //min percent (1-100), must > 0
 	),
+
 
 	'jagung' => array(
 		8000, //harga
@@ -48,17 +60,29 @@ $ori_master_matr_arr = array(
 		0, //max percent (1-100)
 		0, //min percent (1-100)
 	),
+	'dedak' => array(
+		2500, // harga per kg (estimasi)
+		8, // protein
+		42,   // karbo
+		12,    // lemak
+		13,   // serat
+		0,    // lain-lain
+		0,    // amust
+		30,   // max percent (1-100)
+		0,    // min percent (1-100)
+	),
+
 
 	'tgaplek' => array(
-		6500, //harga 			was 8000
+		4500, //harga 			was 8000
 		2, //protein
 		82, //karbo
 		1, //lemak
 		3, //serat
 		0, //lain-lain
 		0, //amust
-		0, //max percent (1-100)
-		10, //min percent (1-100)
+		20, //max percent (1-100)
+		1, //min percent (1-100)
 	),
 
 	'troti' => array(
@@ -70,7 +94,7 @@ $ori_master_matr_arr = array(
 		0, //lain-lain
 		0, //amust
 		0, //max percent (1-100)
-		10, //min percent (1-100)
+		0, //min percent (1-100)
 	),
 	'tikan' => array(
 		7500, //harga
@@ -91,8 +115,8 @@ $ori_master_matr_arr = array(
 		2, //serat
 		0, //lain-lain
 		0, //amust
-		0, //max percent (1-100)
-		0, //min percent (1-100)
+		15, //max percent (1-100)
+		1, //min percent (1-100)
 	),
 	'tkedelai' => array(
 		7000, //harga
@@ -125,7 +149,7 @@ $ori_master_matr_arr = array(
 		15, //serat
 		0, //lain-lain
 		0, //amust
-		5, //max percent (1-100)
+		10, //max percent (1-100)
 		0, //min percent (1-100)
 	),
 	'tkangkung' => array(
@@ -136,7 +160,7 @@ $ori_master_matr_arr = array(
 		16.5, //serat
 		0, //lain-lain
 		0, //amust
-		5, //max percent (1-100)
+		10, //max percent (1-100)
 		0, //min percent (1-100)
 	),
 	'tsawit' => array(
@@ -160,9 +184,34 @@ $ori_master_matr_arr = array(
 		5, //serat, 15
 		0, //lain-lain
 		0, //amust
-		0, //max percent (1-100)
+		15, //max percent (1-100)
 		0, //min percent (1-100)
 	),
+
+
+	'ampkelapa' => array(
+		4000, //harga
+		7, //protein
+		45, //karbo
+		18, //lemak
+		14, //serat
+		0, //lain-lain
+		0, //amust
+		15, //max percent (1-100)
+		0, //min percent (1-100)
+	),
+	'karak' => array(
+		5500, //harga
+		7.5, //protein
+		72, //karbo
+		1.5, //lemak
+		1, //serat
+		0, //lain-lain
+		0, //amust
+		50, //max percent (1-100)
+		0, //min percent (1-100)
+	),
+
 );
 
 // prepare master matr

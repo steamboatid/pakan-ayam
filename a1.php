@@ -39,15 +39,15 @@ $serat_max = 7;
 // $khijau_max = 30;
 
 $def_mix_cap = 100; // 100 kg mixing cap
-$price_max = 7000;
+$price_max = 19000;
 
 
 if ($ayam_target == 'starter') {
   // usia 0-4 minggu
-  $protein_min = 19;
-  $protein_max = 23;
-  $karbo_min = 54;
-  $karbo_max = 60;
+  $protein_min = 17; // min=18
+  $protein_max = 21; // max=20
+  $karbo_min = 54; // 55-60
+  $karbo_max = 61;
   // $lemak_max = 5;
   // $serat_max = 5;
   // $price_max = 7000;
@@ -55,35 +55,42 @@ if ($ayam_target == 'starter') {
   // not used materials
   // unset($master_matr_arr['tikan']);
   unset($master_matr_arr['crum592']);
+  unset($master_matr_arr['cp112']);
 
-  unset($master_matr_arr['tgaplek']);
+  // unset($master_matr_arr['tgaplek']);
+  unset($master_matr_arr['gamblong']);
+
   unset($master_matr_arr['troti']);
-  unset($master_matr_arr['jagung']);
-  unset($master_matr_arr['bekatul']);
-  unset($master_matr_arr['tkedelai']);
+  // unset($master_matr_arr['jagung']);
+  // unset($master_matr_arr['bekatul']);
+  // unset($master_matr_arr['tkedelai']);
   unset($master_matr_arr['tsawit']);
   //
 
 } elseif ($ayam_target == 'finisher') {
   // usia 4-16/24 minggu
-  $protein_min = 16;
-  $protein_max = 20;
-  $karbo_min = 60;
+  $protein_min = 14; // min=15
+  $protein_max = 18; // max=17
+  $karbo_min = 60; // 60-65
   $karbo_max = 100;
   // $lemak_max = 6;
   // $serat_max = 6;
-  // $price_max = 6500;
+  // $price_max = 6000;
 
   // not used materials
   unset($master_matr_arr['crum591']);
+  unset($master_matr_arr['crum592']); // using cp112
+  unset($master_matr_arr['cp112']);
 
-  unset($master_matr_arr['tgaplek']);
+  // unset($master_matr_arr['tgaplek']);
+  unset($master_matr_arr['gamblong']);
+
   unset($master_matr_arr['troti']);
-  unset($master_matr_arr['jagung']);
-  unset($master_matr_arr['bekatul']);
-  unset($master_matr_arr['tkedelai']);
+  // unset($master_matr_arr['jagung']);
+  // unset($master_matr_arr['bekatul']);
+  // unset($master_matr_arr['tkedelai']);
   unset($master_matr_arr['tsawit']);
-  unset($master_matr_arr['crum592']);
+
   //
 
 }

@@ -30,24 +30,34 @@ function ga_compute_agent_fitness(array &$aagent)
   $str_mul = array();
 
   // bad agents
-  if (!is_ayam_starter() && $aagent['non_zero'] <= 2) {
+  $nz_lo = 2;
+  $nz_hi = 6;
+  if (!is_ayam_starter() && $aagent['non_zero'] <= $nz_lo) {
     $aagent['err'] = 'non zero <= 2 ';
     // $aagent['fitness'] = PHP_INT_MAX;
     // print_rdie($aagent);
     // return;
     $fit_mul *= 2;
-    $str_mul[] = 'nonzero <= 2';
+    $str_mul[] = "nonzero <= $nz_lo";
     //
 
+  } elseif ($aagent['non_zero'] > $nz_lo && $aagent['non_zero'] <= $nz_hi) {
+    // $aagent['err'] = 'non zero 2-5';
+    // $aagent['fitness'] = PHP_INT_MAX;
+    // print_rdie($aagent);
+    // return;
+    $fit_mul *= 0.2;
+    $str_mul[] = "nonzero $nz_lo-$nz_hi";
+    //
+
+  } elseif ($aagent['non_zero'] > $nz_hi) {
+    $aagent['err'] = "non zero > $nz_hi";
+    $aagent['fitness'] = PHP_INT_MAX;
+    // print_rdie($aagent);
+    // return;
+    $fit_mul *= 3;
+    $str_mul[] = "nonzero > $nz_hi";
   }
-  // elseif ($aagent['non_zero'] > 5) {
-  //   $aagent['err'] = 'non zero > 5';
-  //   $aagent['fitness'] = PHP_INT_MAX;
-  //   // print_rdie($aagent);
-  //   // return;
-  //   $fit_mul *= 30000;
-  //   $str_mul[] = 'nonzero > 5';
-  // }
 
   if ($aagent['sum_part'] > 20) {
     $aagent['err'] = 'too many parts';
@@ -67,13 +77,21 @@ function ga_compute_agent_fitness(array &$aagent)
     $str_mul[] = 'sumpart-few';
   }
 
-  if ($aagent['min_percent'] < 3) {
+  // percent too small
+  if ($aagent['min_percent'] < 5) {
     $aagent['err'] = 'too small percent';
     // $aagent['fitness'] = PHP_INT_MAX;
     // print_rdie($aagent);
     // return;
-    $fit_mul *= 2;
+    $fit_mul *= 200;
     $str_mul[] = 'minperc';
+  } elseif ($aagent['max_percent'] > 80) {
+    $aagent['err'] = 'too big percent';
+    // $aagent['fitness'] = PHP_INT_MAX;
+    // print_rdie($aagent);
+    // return;
+    $fit_mul *= 300;
+    $str_mul[] = 'maxperc';
   }
 
   if ($aagent['lemak'] > $lemak_max) {
@@ -99,7 +117,7 @@ function ga_compute_agent_fitness(array &$aagent)
     // $aagent['fitness'] = PHP_INT_MAX;
     // print_rdie($aagent);
     // return;
-    $fit_mul *= 30;
+    $fit_mul *= 30000;
     $str_mul[] = 'prote-min';
     //
 
@@ -108,7 +126,7 @@ function ga_compute_agent_fitness(array &$aagent)
     // $aagent['fitness'] = PHP_INT_MAX;
     // print_rdie($aagent);
     // return;
-    $fit_mul *= 300;
+    $fit_mul *= 300000;
     $str_mul[] = 'prote-max';
   }
 
@@ -117,7 +135,7 @@ function ga_compute_agent_fitness(array &$aagent)
     // $aagent['fitness'] = PHP_INT_MAX;
     // print_rdie($aagent);
     //return;
-    $fit_mul *= 40;
+    $fit_mul *= 40000;
     $str_mul[] = 'karbo-min';
     //
 
@@ -126,7 +144,7 @@ function ga_compute_agent_fitness(array &$aagent)
     // $aagent['fitness'] = PHP_INT_MAX;
     // print_rdie($aagent);
     //return;
-    $fit_mul *= 400;
+    $fit_mul *= 400000;
     $str_mul[] = 'karbo-max';
   }
 
@@ -154,7 +172,7 @@ function ga_compute_agent_fitness(array &$aagent)
   $matr_names = array_keys($master_matr_arr);
   // if ($non_zero > 2)
   //   foreach ($matr_names as $amat_name) {
-  //     if (stristr($amat_name, 'crum')) continue;
+  //     if (stristr($amat_name, 'crum') || stristr($amat_name, 'cp')) continue;
 
   //     $aperc = 0;
   //     if (isset($aagent['mats'][$amat_name]['part_percent']))
@@ -162,10 +180,10 @@ function ga_compute_agent_fitness(array &$aagent)
 
   //     if (is_zero($aperc)) continue;
 
-  //     if ($aperc < 3) { // too small
+  //     if ($aperc < 10) { // too small
   //       $fit_mul *= 20000;
   //       $str_mul[] = 'mat-too-small-' . $amat_name;
-  //     } elseif ($aperc > 60) { // too big
+  //     } elseif ($aperc > 80) { // too big
   //       $fit_mul *= 30000;
   //       $str_mul[] = 'mat-too-high-' . $amat_name;
   //     }
@@ -191,10 +209,10 @@ function ga_compute_agent_fitness(array &$aagent)
         continue;
       //
       elseif ($aperc < $amin_perc && !is_zero($amin_perc)) {
-        $fit_mul *= 2;
+        $fit_mul *= 20000;
         //
       } elseif ($aperc > $amax_perc && !is_zero($amax_perc)) {
-        $fit_mul *= 3;
+        $fit_mul *= 30000;
         //
 
       }
@@ -202,12 +220,12 @@ function ga_compute_agent_fitness(array &$aagent)
 
     } else {
       if ($aperc < $amin_perc && !is_zero($amin_perc)) {
-        $fit_mul *= 20;
+        $fit_mul *= 200000;
         $str_mul[] = 'amust-too-small-' . $amat_name;
         //
 
       } elseif ($aperc > $amax_perc && !is_zero($amax_perc)) {
-        $fit_mul *= 30;
+        $fit_mul *= 300000;
         $str_mul[] = 'amust-too-big-' . $amat_name;
         //
       }
@@ -272,14 +290,14 @@ function ga_compute_agent_fitness(array &$aagent)
 
 
   // check amust part
-  $exist_crum591 = is_agent_mat_part_exists($aagent, 'crum591');
-  $exist_crum592 = is_agent_mat_part_exists($aagent, 'crum592');
-  if (is_ayam_starter() && $exist_crum592) {
+  $exist_pakan_starter = is_agent_mat_part_exists($aagent, 'crum591');
+  $exist_pakan_finisher = is_agent_mat_part_exists($aagent, 'crum592') || is_agent_mat_part_exists($aagent, 'cp112');
+  if (is_ayam_starter() && $exist_pakan_finisher) {
     $fit_mul *= 90000;
     $str_mul[] = 'amust-wrong';
     //
 
-  } elseif (is_ayam_grower_finisher() && $exist_crum591) {
+  } elseif (is_ayam_grower_finisher() && $exist_pakan_starter) {
     $fit_mul *= 90000;
     $str_mul[] = 'amust-wrong';
     //
@@ -287,12 +305,27 @@ function ga_compute_agent_fitness(array &$aagent)
 
 
   $amust_part = 0.0;
-  if (is_ayam_starter()) $amust_part = (float) ($aagent['mats']['crum591']['part']?? 0.0);
-  elseif (is_ayam_grower_finisher()) $amust_part = (float) ($aagent['mats']['crum592']['part']?? 0.0);
+  if (is_ayam_starter())
+    $amust_part = (float) ($aagent['mats']['crum591']['part'] ?? 0.0);
+
+  elseif (is_ayam_grower_finisher()) {
+    if (isset($aagent['mats']['crum592']))
+      $amust_part = (float) ($aagent['mats']['crum592']['part'] ?? 0.0);
+    elseif (isset($aagent['mats']['cp112']))
+      $amust_part = (float) ($aagent['mats']['cp112']['part'] ?? 0.0);
+  }
 
   $amust_perc = 0.0;
-  if (is_ayam_starter()) $amust_perc = (float) ($aagent['mats']['crum591']['part_percent'] ?? 0.0);
-  elseif (is_ayam_grower_finisher()) $amust_perc = (float) ($aagent['mats']['crum592']['part_percent'] ?? 0.0);
+  if (is_ayam_starter())
+    $amust_perc = (float) ($aagent['mats']['crum591']['part_percent'] ?? 0.0);
+
+  elseif (is_ayam_grower_finisher()) {
+    if (isset($aagent['mats']['crum592']))
+      $amust_perc = (float) ($aagent['mats']['crum592']['part_percent'] ?? 0.0);
+    elseif (isset($aagent['mats']['cp112']))
+      $amust_perc = (float) ($aagent['mats']['cp112']['part_percent'] ?? 0.0);
+  }
+
   // print_rdie($amust_perc);
   if (is_ayam_starter() && $amust_perc > 50) {
     $fit_mul *= 3;
@@ -326,7 +359,7 @@ function ga_compute_agent_fitness(array &$aagent)
 
   $lemak_serat = $aagent['serat'] + $aagent['lemak'];
   // $parts_config = $aagent['avg_part'] * $aagent['sum_part'] * $aagent['non_zero'];
-  $parts_config = $aagent['sum_part'] * $aagent['non_zero'];
+  $parts_config = $aagent['sum_part'] * pow($aagent['non_zero'], 1.5);
   $parts_config = round($parts_config, 1);
   // print_rdie($parts_config);
 
@@ -336,7 +369,7 @@ function ga_compute_agent_fitness(array &$aagent)
   // $fitness = $aagent['price_per_kg'] / ($aagent['karbo']);
 
   $price_near = round($aagent['price_per_kg'] / 1000, 1);
-  $price_pow = round(pow($price_near, 2), 2);
+  $price_pow = round(pow($price_near, 1.5), 2);
 
   $fitness = $price_pow * $parts_config / $karbo_protein * $lemak_serat * $fit_mul;
   $aagent['fitness'] = round($fitness, 3);
@@ -461,7 +494,7 @@ function ga_init_agent(array $aref = array(), float $min_part = 0.0): array
   $avg_part = 0;
   $sum_part = 0;
   $matr_arr_idx = array_keys($master_matr_arr);
-  // shuffle($matr_arr_idx);
+  shuffle($matr_arr_idx);
   // print_rdie($matr_arr_idx);
 
   // init part|bagian
@@ -471,18 +504,27 @@ function ga_init_agent(array $aref = array(), float $min_part = 0.0): array
     $aagent_mats[$amat_name] = array();
 
     if (is_ayam_starter()) {
-      if ($amat_name == 'crum591') $apart = 1;
-      elseif (stristr($amat_name, 'crum')) $apart = 0;
-      else $apart = random_float($min_part, 2);
+      if (is_mat_for_starter($amat_name)) $apart = 1;
+      elseif (stristr($amat_name, 'crum') || stristr($amat_name, 'cp')) $apart = 0;
+      else $apart = random_float($min_part, 3);
       //
 
     } else { // finisher, grower
-      if ($amat_name == 'crum592') $apart = 1;
+      if (is_mat_for_grower_finisher($amat_name)) $apart = 1;
       elseif (stristr($amat_name, 'crum')) $apart = 0;
-      else $apart = random_float($min_part, 2);
+      else $apart = random_float($min_part, 3);
       //
     }
-    // if ($non_zero < 3) $apart = random_int(1, 2);
+
+    if (
+      !(stristr($amat_name, 'pur') ||
+        stristr($amat_name, 'kons') ||
+        stristr($amat_name, 'cp') ||
+        stristr($amat_name, 'crum')) &&
+      $non_zero < 3 &&
+      is_zero($apart)
+    )
+      $apart = random_int(1, 3);
 
     $aagent_mats[$amat_name]['part'] = $apart; // part per material
     $sum_part += $apart;
@@ -566,11 +608,15 @@ function ga_compute_agent_part_percent_price(array &$aagent)
 
   // compute prosen & kgpart
   $min_percent = PHP_INT_MAX;
+  $max_percent = 0;
   $tot_price = 0;
   foreach ($matr_arr_idx as $amat_name) {
     $apercent = $aagent_mats[$amat_name]['part'] / $sum_part * 100;
     // $apercent = round($apercent, 1);
-    if ($apercent > 0) $min_percent = min($apercent, $min_percent);
+    if ($apercent > 0) {
+      $min_percent = min($apercent, $min_percent);
+      $max_percent = max($apercent, $max_percent);
+    }
 
     $akgpart = $apercent / 100 * $def_mix_cap;
     // $akgpart = round($akgpart, 1);
@@ -602,6 +648,7 @@ function ga_compute_agent_part_percent_price(array &$aagent)
     'sum_part' => $sum_part,
     'avg_part' => $avg_part,
     'min_percent' => $min_percent,
+    'max_percent' => $max_percent,
     'fitness' => PHP_INT_MAX,
     'err' => '',
   );
@@ -617,13 +664,18 @@ function ga_fix_agent_mat_part(array &$aagent)
 
   $mat_names = array_keys($master_matr_arr);
   foreach ($mat_names as $amat_name) {
-    if (stristr($amat_name, 'crum')) continue;
+    if (
+      stristr($amat_name, 'pur') ||
+      stristr($amat_name, 'kons') ||
+      stristr($amat_name, 'cp') ||
+      stristr($amat_name, 'crum')
+    ) continue;
 
     $aperc = 0;
     if (isset($aagent['mats'][$amat_name]['part_percent']))
       $aperc = $aagent['mats'][$amat_name]['part_percent'];
 
-    if ($aperc < 3) { // too small
+    if ($aperc < 5) { // too small
       // print_rdie($aagent);
       $aagent['mats'][$amat_name]['part'] = 0;
       $aagent['mats'][$amat_name]['part_percent'] = 0.0;
@@ -756,6 +808,7 @@ function ga_doing_crossover(array $aga, array $agb): array
   $ag2 = ga_init_agent();
   $ag3 = ga_init_agent();
   $ag4 = ga_init_agent();
+  $ag5 = ga_init_agent();
   // print_rdie($ag1);
 
   $matr_arr_idx = array_keys($master_matr_arr);
@@ -772,18 +825,25 @@ function ga_doing_crossover(array $aga, array $agb): array
     $ag2['mats'][$mat_name]['part'] = round($aga['mats'][$mat_name]['part'] + $agb['mats'][$mat_name]['part'], 1);
     $ag3['mats'][$mat_name]['part'] = round(max($aga['mats'][$mat_name]['part'], $agb['mats'][$mat_name]['part']), 1);
     $ag4['mats'][$mat_name]['part'] = round(min($aga['mats'][$mat_name]['part'], $agb['mats'][$mat_name]['part']), 1);
+    $ag5['mats'][$mat_name]['part'] = round(abs($aga['mats'][$mat_name]['part'] - $agb['mats'][$mat_name]['part']), 1);
 
     // forcing crum always exists
-    if ($mat_name == 'crum591' && is_ayam_grower_finisher()) {
+    if (is_mat_for_grower_finisher($mat_name) && is_ayam_grower_finisher()) {
       $ag1['mats'][$mat_name]['part'] = max($ag1['mats'][$mat_name]['part'], $amust_min);
       $ag2['mats'][$mat_name]['part'] = max($ag2['mats'][$mat_name]['part'], $amust_min);
       $ag3['mats'][$mat_name]['part'] = max($ag3['mats'][$mat_name]['part'], $amust_min);
       $ag4['mats'][$mat_name]['part'] = max($ag4['mats'][$mat_name]['part'], $amust_min);
-    } elseif ($mat_name == 'crum591' && is_ayam_starter()) {
+      $ag5['mats'][$mat_name]['part'] = max($ag5['mats'][$mat_name]['part'], $amust_min);
+      //
+
+    } elseif (is_mat_for_starter($mat_name) && is_ayam_starter()) {
       $ag1['mats'][$mat_name]['part'] = max($ag1['mats'][$mat_name]['part'], $amust_min);
       $ag2['mats'][$mat_name]['part'] = max($ag2['mats'][$mat_name]['part'], $amust_min);
       $ag3['mats'][$mat_name]['part'] = max($ag3['mats'][$mat_name]['part'], $amust_min);
       $ag4['mats'][$mat_name]['part'] = max($ag4['mats'][$mat_name]['part'], $amust_min);
+      $ag5['mats'][$mat_name]['part'] = max($ag5['mats'][$mat_name]['part'], $amust_min);
+      //
+
     }
   }
   // print_rdie($ag4);
@@ -793,11 +853,13 @@ function ga_doing_crossover(array $aga, array $agb): array
   $non_zero2 = 0;
   $non_zero3 = 0;
   $non_zero4 = 0;
+  $non_zero5 = 0;
   foreach ($matr_arr_idx as $mat_name) {
     if ($ag1['mats'][$mat_name]['part'] > 0) $non_zero1++;
     if ($ag2['mats'][$mat_name]['part'] > 0) $non_zero2++;
     if ($ag3['mats'][$mat_name]['part'] > 0) $non_zero3++;
     if ($ag4['mats'][$mat_name]['part'] > 0) $non_zero4++;
+    if ($ag5['mats'][$mat_name]['part'] > 0) $non_zero5++;
   }
 
 
@@ -805,17 +867,20 @@ function ga_doing_crossover(array $aga, array $agb): array
   $ag2['non_zero'] = $non_zero2;
   $ag3['non_zero'] = $non_zero3;
   $ag4['non_zero'] = $non_zero4;
+  $ag5['non_zero'] = $non_zero5;
 
   $ag1['ops'] = 'crossover1';
   $ag2['ops'] = 'crossover2';
   $ag3['ops'] = 'crossover3';
   $ag4['ops'] = 'crossover4';
+  $ag5['ops'] = 'crossover5';
 
   $ags = array();
   if ($non_zero1 > 0) $ags[] = $ag1;
   if ($non_zero2 > 0) $ags[] = $ag2;
   if ($non_zero3 > 0) $ags[] = $ag3;
   if ($non_zero4 > 0) $ags[] = $ag4;
+  if ($non_zero5 > 0) $ags[] = $ag5;
 
   return $ags;
 }
@@ -849,34 +914,103 @@ function ga_mutation(array $apop, string $mut_type = ''): array
   if ($num < 3) print_rdie('FATAL ERROR');
 
   $matr_arr_idx = array_keys($master_matr_arr);
-  // shuffle($matr_arr_idx);
   $the_pop = array();
   $amust_min = 0.9;
 
   for ($i = 0; $i < $num; $i++) {
     $aga = $apop[$i];
-    $ag1 = ga_init_agent($aga);
-    $ag2 = ga_init_agent($aga);
-    $ag3 = ga_init_agent($aga);
-    $ag4 = $aga;
-    $ag5 = $aga;
+    $ag1 = $aga; // add random
+    $ag2 = $aga; // divide 2-5
+    $ag3 = $aga; // unzero
+    $ag4 = $aga; // zero one material
+    $ag5 = $aga; // multiply by 1.1-2.0
 
+    $ag_tikan = $aga; // forcing tikan
+    $ag_bkedelai = $aga; // forcing bkedeleai
+
+    $done1 = 0;
+    $done2 = 0;
+    $done3 = 0;
+    $done4 = 0;
+    $done5 = 0;
+
+    shuffle($matr_arr_idx);
     foreach ($matr_arr_idx as $mat_name) {
-      $ag1['mats'][$mat_name]['part'] = round($aga['mats'][$mat_name]['part'] + random_int(0, 2), 1);
-      $ag2['mats'][$mat_name]['part'] = round($aga['mats'][$mat_name]['part'] / random_int(2, 5), 1);
-      if (is_zero($aga['mats'][$mat_name]['part'])) $ag3['mats'][$mat_name]['part'] = random_int(0, 2);
+
+      // add random part
+      if ($done1 < 1 && !is_zero($ag1['mats'][$mat_name]['part'])) {
+        $add_part = random_int(0, 2);
+        if ($add_part > 0) {
+          $ag1['mats'][$mat_name]['part'] = round($ag1['mats'][$mat_name]['part'] + $add_part, 1);
+          $done1++;
+        }
+      }
+
+      // divide part by 2-5
+      if ($done2 < 1 && !is_zero($ag2['mats'][$mat_name]['part'])) {
+        $div_part = random_int(2, 5);
+        $ag2['mats'][$mat_name]['part'] = round($ag2['mats'][$mat_name]['part'] / $div_part, 1);
+        $done2++;
+      }
+
+      // unzero empty part
+      if ($done3 < 1 && is_zero($ag3['mats'][$mat_name]['part'])) {
+        $not_zero_part = random_int(0, 2);
+        if ($not_zero_part > 0) {
+          $ag3['mats'][$mat_name]['part'] = $not_zero_part;
+          $done3++;
+        }
+      }
+
+      // zero one material
+      if ($done4 < 1 && !is_zero($ag4['mats'][$mat_name]['part'])) {
+        $ag4['mats'][$mat_name]['part'] = 0.0;
+        $done4++;
+      }
+
+      // multiply by factor: 1.1-2.0
+      if ($done5 < 1 && !is_zero($ag5['mats'][$mat_name]['part'])) {
+        $mul_part = random_float(1.1, 2.0);
+        $ag5['mats'][$mat_name]['part'] *= $mul_part;
+        $done5++;
+      }
+
+
+      // $ag1['mats'][$mat_name]['part'] = round($aga['mats'][$mat_name]['part'] + random_int(0, 2), 1);
+      // $ag2['mats'][$mat_name]['part'] = round($aga['mats'][$mat_name]['part'] / random_int(2, 5), 1);
+      // if (is_zero($aga['mats'][$mat_name]['part'])) $ag3['mats'][$mat_name]['part'] = random_int(0, 2);
       // else $ag3['mats'][$mat_name]['part'] = 0;
 
       // forcing crum always exists
-      if ($mat_name == 'crum592' && is_ayam_grower_finisher()) {
+      if (is_mat_for_grower_finisher($mat_name) && is_ayam_grower_finisher()) {
         $ag1['mats'][$mat_name]['part'] = max($ag1['mats'][$mat_name]['part'], $amust_min);
         $ag2['mats'][$mat_name]['part'] = max($ag2['mats'][$mat_name]['part'], $amust_min);
         $ag3['mats'][$mat_name]['part'] = max($ag3['mats'][$mat_name]['part'], $amust_min);
-      } elseif ($mat_name == 'crum591' && is_ayam_starter()) {
+        $ag4['mats'][$mat_name]['part'] = max($ag4['mats'][$mat_name]['part'], $amust_min);
+        $ag5['mats'][$mat_name]['part'] = max($ag5['mats'][$mat_name]['part'], $amust_min);
+        //
+
+      } elseif (is_mat_for_starter($mat_name) && is_ayam_starter()) {
         $ag1['mats'][$mat_name]['part'] = max($ag1['mats'][$mat_name]['part'], $amust_min);
         $ag2['mats'][$mat_name]['part'] = max($ag2['mats'][$mat_name]['part'], $amust_min);
         $ag3['mats'][$mat_name]['part'] = max($ag3['mats'][$mat_name]['part'], $amust_min);
+        $ag4['mats'][$mat_name]['part'] = max($ag4['mats'][$mat_name]['part'], $amust_min);
+        $ag5['mats'][$mat_name]['part'] = max($ag5['mats'][$mat_name]['part'], $amust_min);
+        //
+
       }
+    }
+
+    // forcing tikan
+    $mat_name = 'tikan';
+    if (isset($ag_tikan['mats'][$mat_name])) {
+      $ag_tikan['mats'][$mat_name]['part'] = random_float(0.5, 2.1);
+    }
+
+    // forcing bkedeleai
+    $mat_name = 'bkedeleai';
+    if (isset($ag_bkedelai['mats'][$mat_name])) {
+      $ag_bkedelai['mats'][$mat_name]['part'] = random_float(0.5, 2.1);
     }
 
     // compute non_zero
@@ -885,18 +1019,8 @@ function ga_mutation(array $apop, string $mut_type = ''): array
     $non_zero3 = 0;
     $non_zero4 = 0;
     $non_zero5 = 0;
-
-    // forcing tikan
-    $mat_name = 'tikan';
-    if (isset($ag4['mats'][$mat_name])) {
-      $ag4['mats'][$mat_name]['part'] = random_float(0.5, 2.1);
-    }
-
-    // forcing bkedeleai
-    $mat_name = 'bkedeleai';
-    if (isset($ag5['mats'][$mat_name])) {
-      $ag5['mats'][$mat_name]['part'] = random_float(0.5, 2.1);
-    }
+    $non_zero_tikan = 0;
+    $non_zero_bkedelai = 0;
 
     foreach ($matr_arr_idx as $mat_name) {
       if ($ag1['mats'][$mat_name]['part'] > 0) $non_zero1++;
@@ -904,6 +1028,8 @@ function ga_mutation(array $apop, string $mut_type = ''): array
       if ($ag3['mats'][$mat_name]['part'] > 0) $non_zero3++;
       if ($ag4['mats'][$mat_name]['part'] > 0) $non_zero4++;
       if ($ag5['mats'][$mat_name]['part'] > 0) $non_zero5++;
+      if ($ag_tikan['mats'][$mat_name]['part'] > 0) $non_zero_tikan++;
+      if ($ag_bkedelai['mats'][$mat_name]['part'] > 0) $non_zero_bkedelai++;
     }
 
     $ag1['non_zero'] = $non_zero1;
@@ -911,12 +1037,16 @@ function ga_mutation(array $apop, string $mut_type = ''): array
     $ag3['non_zero'] = $non_zero3;
     $ag4['non_zero'] = $non_zero4;
     $ag5['non_zero'] = $non_zero5;
+    $ag_tikan['non_zero'] = $non_zero_tikan;
+    $ag_bkedelai['non_zero'] = $non_zero_bkedelai;
 
     $ag1['ops'] = "mutation: $mut_type";
     $ag2['ops'] = "mutation: $mut_type";
     $ag3['ops'] = "mutation: $mut_type";
     $ag4['ops'] = "mutation: $mut_type";
     $ag5['ops'] = "mutation: $mut_type";
+    $ag_tikan['ops'] = "mutation: $mut_type";
+    $ag_bkedelai['ops'] = "mutation: $mut_type";
     // print_rdie($ag1);
     // print_rdie($ag2);
 
@@ -926,6 +1056,8 @@ function ga_mutation(array $apop, string $mut_type = ''): array
     if ($non_zero3 > 0) $the_pop[] = $ag3;
     if ($non_zero4 > 0) $the_pop[] = $ag4;
     if ($non_zero5 > 0) $the_pop[] = $ag5;
+    if ($non_zero_tikan > 0) $the_pop[] = $ag_tikan;
+    if ($non_zero_bkedelai > 0) $the_pop[] = $ag_bkedelai;
   }
 
   return $the_pop;
@@ -1123,7 +1255,19 @@ function ga_print_agent(array $aagent, string $pre = '')
   $the_err = (string) trim($aagent['err']);
   $the_err = !empty($the_err) ? "\tErr: $the_err" : '';
   $price_kg = number_format($aagent['price_per_kg'], 0, '.', ',');
-  $final = sprintf("\n%s \tProtein=%-.1f%% \tKarbo=%-.1f%% \tLemak=%-.1f%% \tSerat=%-.1f%% \tPrice=%s %s %s \n%s \n", $pre, round($aagent['protein'], 1), round($aagent['karbo'], 1), round($aagent['lemak'], 1), round($aagent['serat'], 1), $price_kg, $the_err, $aagent['str_mul'], $the_mats);
+  $final = sprintf(
+    "\n%s \tProtein=%-.1f%% \tKarbo=%-.1f%% \tLemak=%-.1f%% \tSerat=%-.1f%% \tPrice=%s %s OK=%s Fit=%-.3f \n%s \n",
+    $pre,
+    round($aagent['protein'], 1),
+    round($aagent['karbo'], 1),
+    round($aagent['lemak'], 1),
+    round($aagent['serat'], 1),
+    $price_kg,
+    $the_err,
+    $aagent['str_mul'],
+    $aagent['fitness'],
+    $the_mats
+  );
   $final = "\n\n--- AYAM TARGET: $ayam_target $final";
 
   echo $final;

@@ -6,9 +6,14 @@ function print_rdie(mixed $a)
   $aa = debug_backtrace();
   if (isset($aa[0])) {
     // print_r($aa[0]);
-    $afile = $aa[0]['file'];
-    $aline = $aa[0]['line'];
-    echo "\n\n CALLER: $afile --- $aline \n\n";
+    echo "\n\n CALLER:";
+    for ($i = 0; $i < 5; $i++) {
+      if (!isset($aa[$i])) continue;
+      $afile = $aa[$i]['file'];
+      $aline = $aa[$i]['line'];
+      echo "\n$afile --- $aline";
+    }
+    echo "\n\n";
   }
   die();
 }
@@ -84,6 +89,20 @@ function calculate_rms(array $values): float
 }
 
 
-function round_near(float $number, float $near = 1000): float {
+function round_near(float $number, float $near = 1000): float
+{
   return round($number / $near) * $near;
+}
+
+
+function is_mat_for_starter(string $mat_name)
+{
+  $mat_name = strtolower($mat_name);
+  return $mat_name == 'crum591';
+}
+
+function is_mat_for_grower_finisher(string $mat_name)
+{
+  $mat_name = strtolower($mat_name);
+  return $mat_name == 'crum592' || $mat_name == 'cp112';
 }
