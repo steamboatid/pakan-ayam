@@ -1067,15 +1067,9 @@ function ga_mutation(array $apop, string $mut_type = ''): array
 }
 
 
-/**
- * recompute
- */
-function ga_compute_agent_fixing(array &$aagent) {}
-
 function ga_compute_population(array &$apop)
 {
   foreach ($apop as $idx => $aagent) {
-    ga_compute_agent_fixing($aagent);
     ga_compute_agent_part_percent_price($aagent);
     ga_fix_agent_mat_part($aagent);
 
