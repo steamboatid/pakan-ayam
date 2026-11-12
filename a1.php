@@ -82,14 +82,14 @@ if ($ayam_target == 'starter') {
   unset($master_matr_arr['crum592']); // using cp112
   unset($master_matr_arr['cp112']);
 
-  // unset($master_matr_arr['tgaplek']);
-  unset($master_matr_arr['gamblong']);
+  unset($master_matr_arr['tgaplek']);
+  // unset($master_matr_arr['gamblong']);
 
   unset($master_matr_arr['troti']);
   // unset($master_matr_arr['jagung']);
   // unset($master_matr_arr['bekatul']);
   // unset($master_matr_arr['tkedelai']);
-  unset($master_matr_arr['tsawit']);
+  // unset($master_matr_arr['tsawit']);
 
   //
 

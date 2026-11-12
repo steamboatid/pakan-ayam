@@ -61,14 +61,14 @@ $ori_master_matr_arr = array(
 		0, //min percent (1-100)
 	),
 	'dedak' => array(
-		2500, // harga per kg (estimasi)
+		2500, // harga
 		8, // protein
 		42,   // karbo
 		12,    // lemak
 		13,   // serat
 		0,    // lain-lain
 		0,    // amust
-		30,   // max percent (1-100)
+		0,   // max percent (1-100)
 		0,    // min percent (1-100)
 	),
 
@@ -81,8 +81,8 @@ $ori_master_matr_arr = array(
 		3, //serat
 		0, //lain-lain
 		0, //amust
-		20, //max percent (1-100)
-		1, //min percent (1-100)
+		0, //max percent (1-100)
+		0, //min percent (1-100)
 	),
 
 	'troti' => array(
@@ -94,7 +94,7 @@ $ori_master_matr_arr = array(
 		0, //lain-lain
 		0, //amust
 		0, //max percent (1-100)
-		1, //min percent (1-100)
+		0, //min percent (1-100)
 	),
 	'tikan' => array(
 		7500, //harga
@@ -115,8 +115,8 @@ $ori_master_matr_arr = array(
 		2, //serat
 		0, //lain-lain
 		0, //amust
-		15, //max percent (1-100)
-		1, //min percent (1-100)
+		0, //max percent (1-100)
+		0, //min percent (1-100)
 	),
 	'tkedelai' => array(
 		7000, //harga
@@ -139,7 +139,7 @@ $ori_master_matr_arr = array(
 		0, //lain-lain
 		0, //amust
 		0, //max percent (1-100)
-		10, //min percent (1-100)
+		0, //min percent (1-100)
 	),
 	'trajukerang' => array(
 		3000, //harga
@@ -171,7 +171,7 @@ $ori_master_matr_arr = array(
 		16, //serat
 		0, //lain-lain
 		0, //amust
-		5, //max percent (1-100)
+		10, //max percent (1-100)
 		0, //min percent (1-100)
 	),
 
@@ -184,7 +184,7 @@ $ori_master_matr_arr = array(
 		5, //serat, 15
 		0, //lain-lain
 		0, //amust
-		15, //max percent (1-100)
+		0, //max percent (1-100)
 		0, //min percent (1-100)
 	),
 
@@ -197,7 +197,7 @@ $ori_master_matr_arr = array(
 		14, //serat
 		0, //lain-lain
 		0, //amust
-		15, //max percent (1-100)
+		0, //max percent (1-100)
 		0, //min percent (1-100)
 	),
 	'karak' => array(
@@ -208,7 +208,7 @@ $ori_master_matr_arr = array(
 		1, //serat
 		0, //lain-lain
 		0, //amust
-		50, //max percent (1-100)
+		0, //max percent (1-100)
 		0, //min percent (1-100)
 	),
 

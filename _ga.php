@@ -32,16 +32,16 @@ function ga_compute_agent_fitness(array &$aagent)
   // bad agents
   $nz_lo = 2;
   $nz_hi = 6;
-  if (!is_ayam_starter() && $aagent['non_zero'] <= $nz_lo) {
-    $aagent['err'] = 'non zero <= 2 ';
+  if (!is_ayam_starter() && $aagent['non_zero'] < $nz_lo) {
+    $aagent['err'] = 'non zero < 2 ';
     // $aagent['fitness'] = PHP_INT_MAX;
     // print_rdie($aagent);
     // return;
     $fit_mul *= 2;
-    $str_mul[] = "nonzero <= $nz_lo";
+    $str_mul[] = "nonzero < $nz_lo";
     //
 
-  } elseif ($aagent['non_zero'] > $nz_lo && $aagent['non_zero'] <= $nz_hi) {
+  } elseif ($aagent['non_zero'] >= $nz_lo && $aagent['non_zero'] <= $nz_hi) {
     // $aagent['err'] = 'non zero 2-5';
     // $aagent['fitness'] = PHP_INT_MAX;
     // print_rdie($aagent);
