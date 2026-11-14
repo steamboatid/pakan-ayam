@@ -198,7 +198,7 @@ $ori_master_matr_arr = array(
 		5, //serat, 15
 		0, //lain-lain
 		0, //amust
-		20, //max percent (1-100)
+		25, //max percent (1-100)
 		0, //min percent (1-100)
 	),
 

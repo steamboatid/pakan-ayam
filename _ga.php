@@ -37,15 +37,9 @@ function ga_compute_agent_fitness(array &$aagent)
     $fit_mul *= 2;
     $str_mul[] = "nonzero <= $nz_lo";
     $str_err[] = "non zero <= $nz_lo ";
-    //
-
-    // } elseif ($aagent['non_zero'] >= $nz_lo && $aagent['non_zero'] <= $nz_hi) {
-    //   $fit_mul *= 0.2;
-    //   $str_mul[] = "nonzero $nz_lo-$nz_hi";
-    //   $str_err[] = "nonzero $nz_lo-$nz_hi";
-    //   //
-
-  } elseif ($aagent['non_zero'] > $nz_hi) {
+  }
+  //---
+  elseif ($aagent['non_zero'] > $nz_hi) {
     $fit_mul *= 3;
     $str_mul[] = "nonzero > $nz_hi";
     $str_err[] = "non zero > $nz_hi";
@@ -56,8 +50,8 @@ function ga_compute_agent_fitness(array &$aagent)
     $str_mul[] = 'sumpart-many';
     $str_err[] = 'too many parts';
   }
-
-  if ($aagent['sum_part'] < 5) {
+  //---
+  elseif ($aagent['sum_part'] < 5) {
     $fit_mul *= 2;
     $str_mul[] = 'sumpart-few';
     $str_err[] = 'too few parts';
@@ -69,9 +63,8 @@ function ga_compute_agent_fitness(array &$aagent)
     $str_mul[] = 'minperc';
     $str_err[] = 'too small percent';
   }
-
   // max percent too big
-  if ($aagent['max_percent'] >= TOO_BIG_PERCENT) {
+  elseif ($aagent['max_percent'] >= TOO_BIG_PERCENT) {
     $fit_mul *= 300;
     $str_mul[] = 'maxperc';
     $str_err[] = 'too big percent';
@@ -94,30 +87,30 @@ function ga_compute_agent_fitness(array &$aagent)
     $fit_mul *= 300;
     $str_mul[] = 'prote-min';
     $str_err[] = 'protein too low';
-    //
-
-  } elseif ($aagent['protein'] > $protein_max) {
+  }
+  //---
+  elseif ($aagent['protein'] > $protein_max) {
     $fit_mul *= 400;
     $str_mul[] = 'prote-max';
     $str_err[] = 'protein too high';
-    //
-
-  } else $ok_prote = true;
+  }
+  //---
+  else $ok_prote = true;
 
   $ok_karbo = false;
   if ($aagent['karbo'] < $karbo_min) {
     $fit_mul *= 500;
     $str_mul[] = 'karbo-min';
     $str_err[] = 'karbo too low';
-    //
-
-  } elseif ($aagent['karbo'] > $karbo_max) {
+  }
+  //---
+  elseif ($aagent['karbo'] > $karbo_max) {
     $fit_mul *= 600;
     $str_mul[] = 'karbo-max';
     $str_err[] = 'karbo too high';
-    //
-
-  } else $ok_karbo = true;
+  }
+  //---
+  else $ok_karbo = true;
 
   if ((!$ok_prote && $ok_karbo) || ($ok_prote && !$ok_karbo)) {
     $fit_mul *= 500;
@@ -129,9 +122,8 @@ function ga_compute_agent_fitness(array &$aagent)
     $fit_mul *= 600;
     $str_mul[] = 'price-max';
     $str_err[] = 'price too high';
-    //
-
   }
+
 
 
   $matr_names = array_keys($master_matr_arr);
