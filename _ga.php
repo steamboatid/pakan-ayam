@@ -28,171 +28,113 @@ function ga_compute_agent_fitness(array &$aagent)
 
   $fit_mul = 1.0;
   $str_mul = array();
+  $str_err = array();
 
   // bad agents
-  $nz_lo = 2;
+  $nz_lo = 3;
   $nz_hi = 6;
-  if (!is_ayam_starter() && $aagent['non_zero'] < $nz_lo) {
-    $aagent['err'] = 'non zero < 2 ';
-    // $aagent['fitness'] = PHP_INT_MAX;
-    // print_rdie($aagent);
-    // return;
+  if (!is_ayam_starter() && $aagent['non_zero'] <= $nz_lo) {
     $fit_mul *= 2;
-    $str_mul[] = "nonzero < $nz_lo";
+    $str_mul[] = "nonzero <= $nz_lo";
+    $str_err[] = "non zero <= $nz_lo ";
     //
 
-  } elseif ($aagent['non_zero'] >= $nz_lo && $aagent['non_zero'] <= $nz_hi) {
-    // $aagent['err'] = 'non zero 2-5';
-    // $aagent['fitness'] = PHP_INT_MAX;
-    // print_rdie($aagent);
-    // return;
-    $fit_mul *= 0.2;
-    $str_mul[] = "nonzero $nz_lo-$nz_hi";
-    //
+    // } elseif ($aagent['non_zero'] >= $nz_lo && $aagent['non_zero'] <= $nz_hi) {
+    //   $fit_mul *= 0.2;
+    //   $str_mul[] = "nonzero $nz_lo-$nz_hi";
+    //   $str_err[] = "nonzero $nz_lo-$nz_hi";
+    //   //
 
   } elseif ($aagent['non_zero'] > $nz_hi) {
-    $aagent['err'] = "non zero > $nz_hi";
-    // $aagent['fitness'] = PHP_INT_MAX;
-    // print_rdie($aagent);
-    // return;
     $fit_mul *= 3;
     $str_mul[] = "nonzero > $nz_hi";
+    $str_err[] = "non zero > $nz_hi";
   }
 
   if ($aagent['sum_part'] > 20) {
-    $aagent['err'] = 'too many parts';
-    // $aagent['fitness'] = PHP_INT_MAX;
-    // print_rdie($aagent);
-    // return;
     $fit_mul *= 2;
     $str_mul[] = 'sumpart-many';
+    $str_err[] = 'too many parts';
   }
 
   if ($aagent['sum_part'] < 5) {
-    $aagent['err'] = 'too few parts';
-    // $aagent['fitness'] = PHP_INT_MAX;
-    // print_rdie($aagent);
-    // return;
     $fit_mul *= 2;
     $str_mul[] = 'sumpart-few';
+    $str_err[] = 'too few parts';
   }
 
   // min percent too small
-  if ($aagent['min_percent'] < 5) {
-    $aagent['err'] = 'too small percent';
-    // $aagent['fitness'] = PHP_INT_MAX;
-    // print_rdie($aagent);
-    // return;
+  if ($aagent['min_percent'] <= TOO_SMALL_PERCENT) {
     $fit_mul *= 200;
     $str_mul[] = 'minperc';
+    $str_err[] = 'too small percent';
   }
 
   // max percent too big
-  if ($aagent['max_percent'] > 80) {
-    $aagent['err'] = 'too big percent';
-    // $aagent['fitness'] = PHP_INT_MAX;
-    // print_rdie($aagent);
-    // return;
+  if ($aagent['max_percent'] >= TOO_BIG_PERCENT) {
     $fit_mul *= 300;
     $str_mul[] = 'maxperc';
+    $str_err[] = 'too big percent';
   }
 
   if ($aagent['lemak'] > $lemak_max) {
-    $aagent['err'] = 'lemak too high';
-    // $aagent['fitness'] = PHP_INT_MAX;
-    // print_rdie($aagent);
-    // return;
+    $str_err[] = 'lemak too high';
     $fit_mul *= 2;
     $str_mul[] = 'lemak-max';
   }
 
   if ($aagent['serat'] > $serat_max) {
-    $aagent['err'] = 'serat too high';
-    // $aagent['fitness'] = PHP_INT_MAX;
-    // print_rdie($aagent);
-    // return;
     $fit_mul *= 2;
     $str_mul[] = 'serat-max';
+    $str_err[] = 'serat too high';
   }
 
+  $ok_prote = false;
   if ($aagent['protein'] < $protein_min) {
-    $aagent['err'] = 'protein too low';
-    // $aagent['fitness'] = PHP_INT_MAX;
-    // print_rdie($aagent);
-    // return;
-    $fit_mul *= 30000;
+    $fit_mul *= 300;
     $str_mul[] = 'prote-min';
+    $str_err[] = 'protein too low';
     //
 
   } elseif ($aagent['protein'] > $protein_max) {
-    $aagent['err'] = 'protein too high';
-    // $aagent['fitness'] = PHP_INT_MAX;
-    // print_rdie($aagent);
-    // return;
-    $fit_mul *= 300000;
+    $fit_mul *= 400;
     $str_mul[] = 'prote-max';
-  }
+    $str_err[] = 'protein too high';
+    //
 
+  } else $ok_prote = true;
+
+  $ok_karbo = false;
   if ($aagent['karbo'] < $karbo_min) {
-    $aagent['err'] = 'karbo too low';
-    // $aagent['fitness'] = PHP_INT_MAX;
-    // print_rdie($aagent);
-    //return;
-    $fit_mul *= 40000;
+    $fit_mul *= 500;
     $str_mul[] = 'karbo-min';
+    $str_err[] = 'karbo too low';
     //
 
   } elseif ($aagent['karbo'] > $karbo_max) {
-    $aagent['err'] = 'karbo too high';
-    // $aagent['fitness'] = PHP_INT_MAX;
-    // print_rdie($aagent);
-    //return;
-    $fit_mul *= 400000;
+    $fit_mul *= 600;
     $str_mul[] = 'karbo-max';
+    $str_err[] = 'karbo too high';
+    //
+
+  } else $ok_karbo = true;
+
+  if ((!$ok_prote && $ok_karbo) || ($ok_prote && !$ok_karbo)) {
+    $fit_mul *= 500;
+    $aagent['err'] = 'prote-karbo-mismatch';
+    $str_mul[] = 'prote-karbo-mismatch';
   }
 
   if ($aagent['price_per_kg'] > $price_max) {
-    $aagent['err'] = 'price too high';
-    // $aagent['fitness'] = PHP_INT_MAX;
-    // print_rdie($aagent);
-    // return;
-    $fit_mul *= 5000;
+    $fit_mul *= 600;
     $str_mul[] = 'price-max';
+    $str_err[] = 'price too high';
     //
 
   }
-  // elseif ($aagent['price_per_kg'] <= $price_max) {
-  //   // $aagent['err'] = 'price too high';
-  //   // $aagent['fitness'] = PHP_INT_MAX;
-  //   // print_rdie($aagent);
-  //   // return;
-  //   $fit_mul *= 0.1;
-  //   $str_mul[] = '< price-ok';
-  // }
 
 
-  $non_zero = (int) $aagent['non_zero'];
   $matr_names = array_keys($master_matr_arr);
-  // if ($non_zero > 2)
-  //   foreach ($matr_names as $amat_name) {
-  //     if (stristr($amat_name, 'crum') || stristr($amat_name, 'cp')) continue;
-
-  //     $aperc = 0;
-  //     if (isset($aagent['mats'][$amat_name]['part_percent']))
-  //       $aperc = $aagent['mats'][$amat_name]['part_percent'];
-
-  //     if (is_zero($aperc)) continue;
-
-  //     if ($aperc < 10) { // too small
-  //       $fit_mul *= 20000;
-  //       $str_mul[] = 'mat-too-small-' . $amat_name;
-  //     } elseif ($aperc > 80) { // too big
-  //       $fit_mul *= 30000;
-  //       $str_mul[] = 'mat-too-high-' . $amat_name;
-  //     }
-  //   }
-
-
   foreach ($matr_names as $amat_name) {
     $apart = 0;
     $aperc = 0;
@@ -212,10 +154,10 @@ function ga_compute_agent_fitness(array &$aagent)
         continue;
       //
       elseif ($aperc < $amin_perc && !is_zero($amin_perc)) {
-        $fit_mul *= 20000;
+        $fit_mul *= 200;
         //
       } elseif ($aperc > $amax_perc && !is_zero($amax_perc)) {
-        $fit_mul *= 30000;
+        $fit_mul *= 300;
         //
 
       }
@@ -223,24 +165,17 @@ function ga_compute_agent_fitness(array &$aagent)
 
     } else {
       if ($aperc < $amin_perc && !is_zero($amin_perc)) {
-        $fit_mul *= 200000;
+        $fit_mul *= 400;
         $str_mul[] = 'amust-too-small-' . $amat_name;
         //
 
       } elseif ($aperc > $amax_perc && !is_zero($amax_perc)) {
-        $fit_mul *= 300000;
+        $fit_mul *= 500;
         $str_mul[] = 'amust-too-big-' . $amat_name;
         //
       }
     }
   }
-
-  // if ($non_zero > 2 && $non_zero <= 6) {
-  //   $fit_mul *= 0.5;
-  //   $str_mul[] = 'non-zero >2 && <=6';
-  // }
-
-  // if (!empty($str_mul)) print_rdie(array($str_mul, $fit_mul));
 
 
 
@@ -296,12 +231,12 @@ function ga_compute_agent_fitness(array &$aagent)
   $exist_pakan_starter = is_agent_mat_part_exists($aagent, 'crum591');
   $exist_pakan_finisher = is_agent_mat_part_exists($aagent, 'crum592') || is_agent_mat_part_exists($aagent, 'cp112');
   if (is_ayam_starter() && $exist_pakan_finisher) {
-    $fit_mul *= 90000;
+    $fit_mul *= 800;
     $str_mul[] = 'amust-wrong';
     //
 
   } elseif (is_ayam_grower_finisher() && $exist_pakan_starter) {
-    $fit_mul *= 90000;
+    $fit_mul *= 800;
     $str_mul[] = 'amust-wrong';
     //
   }
@@ -342,7 +277,7 @@ function ga_compute_agent_fitness(array &$aagent)
   // make sure always bigger 1000 for division rounding at fitness below
   if ($aagent['price_per_kg'] < 1000) {
     $aagent['err'] = 'price too LOW';
-    $fit_mul *= 90000000;
+    $fit_mul *= 900;
     $str_mul[] = 'price-min';
   }
 
@@ -353,7 +288,7 @@ function ga_compute_agent_fitness(array &$aagent)
   // elseif (is_ayam_grower())
   //   $karbo_protein = round($aagent['protein'], 0) + (round($aagent['karbo'], 0) * 2);
   elseif (is_ayam_finisher())
-    $karbo_protein = round($aagent['protein'], 0) + (round($aagent['karbo'], 0) * 5);
+    $karbo_protein = (round($aagent['protein'], 0) * 1) + (round($aagent['karbo'], 0) * 5);
   // elseif (is_ayam_sow())
   //   $karbo_protein = (round($aagent['protein'], 0) * 2) + (round($aagent['karbo'], 0) * 1);
 
@@ -379,6 +314,7 @@ function ga_compute_agent_fitness(array &$aagent)
 
   // dbg fit_mul
   $aagent['str_mul'] = implode(', ', $str_mul);
+  $aagent['err'] = implode(', ', $str_err);
 
   // print_rdie($aagent);
 }
@@ -494,16 +430,24 @@ function ga_init_agent(array $aref = array(), float $min_part = 0.0): array
     'ops' => $aref_ops,
   );
 
-  $avg_part = 0;
-  $sum_part = 0;
   $matr_arr_idx = array_keys($master_matr_arr);
-  shuffle($matr_arr_idx);
-  // print_rdie($matr_arr_idx);
+
+  // init material parts
+  $aagent_mats = array();
+  foreach ($matr_arr_idx as $amat_name) {
+    $aagent_mats[$amat_name]['part'] = 0.0;
+  }
+
 
   // init part|bagian
   $non_zero = 0;
-  $aagent_mats = array();
+  $avg_part = 0;
+  $sum_part = 0;
+  shuffle($matr_arr_idx);
+  shuffle($matr_arr_idx);
+  // print_rdie($matr_arr_idx);
   foreach ($matr_arr_idx as $amat_name) {
+    $apart = 0;
     $aagent_mats[$amat_name] = array();
 
     if (is_ayam_starter()) {
@@ -527,7 +471,10 @@ function ga_init_agent(array $aref = array(), float $min_part = 0.0): array
       $non_zero < 3 &&
       is_zero($apart)
     )
-      $apart = random_int(1, 3);
+      $apart = random_float($min_part, 3);
+
+    $apart = round($apart, 1);
+    // $apart = $non_zero < 6 ? round($apart, 1) : 0;
 
     $aagent_mats[$amat_name]['part'] = $apart; // part per material
     $sum_part += $apart;
@@ -536,6 +483,7 @@ function ga_init_agent(array $aref = array(), float $min_part = 0.0): array
   // print_rdie($aagent_mats);
 
 
+  /*
   // make sure non_zero > 3
   $aloop = 0;
   $matr_arr_idx_random = $matr_arr_idx;
@@ -547,12 +495,13 @@ function ga_init_agent(array $aref = array(), float $min_part = 0.0): array
     // print_rdie($amat_name);
 
     if ($aagent_mats[$amat_name]['part'] < 1) {
-      $apart = random_int(1, 3);
-      $aagent_mats[$amat_name]['part'] = $apart; // part per material
+      $apart = round(random_float(1, 3), 1);
+      $aagent_mats[$amat_name]['part'] += $apart; // part per material
       $sum_part += $apart;
       if ($apart > 0) $non_zero++;
     }
   }
+  print_rdie($aagent_mats);
 
 
   // make sure sum_part > 5
@@ -566,12 +515,15 @@ function ga_init_agent(array $aref = array(), float $min_part = 0.0): array
     // print_rdie($amat_name);
 
     if ($aagent_mats[$amat_name]['part'] < 1) {
-      $apart = random_int(1, 3);
-      $aagent_mats[$amat_name]['part'] = $apart; // part per material
+      $apart = round(random_float(1, 3), 1);
+      $aagent_mats[$amat_name]['part'] += $apart; // part per material
       $sum_part += $apart;
       if ($apart > 0) $non_zero++;
     }
   }
+  print_rdie($aagent_mats);
+  //*/
+
 
   $avg_part = $sum_part / $non_zero;
 
@@ -589,6 +541,8 @@ function ga_init_agent(array $aref = array(), float $min_part = 0.0): array
 function ga_compute_agent_part_percent_price(array &$aagent)
 {
   global $master_matr_arr, $def_mix_cap;
+  global $suplemen_price_per_kg, $suplemen_price_per_mix;
+
 
   $sum_part = 0;
   $matr_arr_idx = array_keys($master_matr_arr);
@@ -638,6 +592,11 @@ function ga_compute_agent_part_percent_price(array &$aagent)
   // print_rdie($aagent_mats);
   // print_rdie($tot_price);
 
+  // add suplemen price per mix to total price, if any
+  if (!is_zero($suplemen_price_per_mix)) {
+    $tot_price += $suplemen_price_per_mix;
+  }
+
   $price_per_kg = $tot_price / $def_mix_cap;
   $price_per_kg = round($price_per_kg, 0);
 
@@ -678,7 +637,7 @@ function ga_fix_agent_mat_part(array &$aagent)
     if (isset($aagent['mats'][$amat_name]['part_percent']))
       $aperc = $aagent['mats'][$amat_name]['part_percent'];
 
-    if ($aperc < 5) { // too small
+    if ($aperc <= TOO_SMALL_PERCENT) { // too small
       // print_rdie($aagent);
       $aagent['mats'][$amat_name]['part'] = 0;
       $aagent['mats'][$amat_name]['part_percent'] = 0.0;
@@ -785,11 +744,13 @@ function ga_select(array $apop): array
   $bpop = array($agent_worst);
 
   shuffle($apop);
+  shuffle($apop);
   $ag1 = array_pop($apop);
   $ag2 = array_pop($apop);
   $aga = $ag1['fitness'] < $ag2['fitness'] ? $ag1 : $ag2;
   $bpop[] = $aga;
 
+  shuffle($apop);
   shuffle($apop);
   $ag1 = array_pop($apop);
   $ag2 = array_pop($apop);
@@ -937,6 +898,7 @@ function ga_mutation(array $apop, string $mut_type = ''): array
     $done4 = 0;
     $done5 = 0;
 
+    shuffle($matr_arr_idx);
     shuffle($matr_arr_idx);
     foreach ($matr_arr_idx as $mat_name) {
 
@@ -1208,7 +1170,7 @@ function ga_merge_main_population(array &$main_pop, array &$res_pop): int
     // print_rdie($aagent);
   }
 
-  echo "\t new=$good_num";
+  if ($good_num > 0) echo "\t new=$good_num";
 
   ga_sort_population($main_pop);
   $main_pop = array_slice($main_pop, 0, $pop_num);
@@ -1253,7 +1215,7 @@ function ga_print_agent(array $aagent, string $pre = '')
   $the_err = !empty($the_err) ? "\tErr: $the_err" : '';
   $price_kg = number_format($aagent['price_per_kg'], 0, '.', ',');
   $final = sprintf(
-    "\n%s \tProtein=%-.1f%% \tKarbo=%-.1f%% \tLemak=%-.1f%% \tSerat=%-.1f%% \tPrice=%s %s OK=%s Fit=%-.3f \n%s \n",
+    "\n%s \tProtein=%-.1f%% \tKarbo=%-.1f%% \tLemak=%-.1f%% \tSerat=%-.1f%% \tPrice=%s %s OK=%s Fit=%-.3f nz=%d \n%s \n",
     $pre,
     round($aagent['protein'], 1),
     round($aagent['karbo'], 1),
@@ -1263,6 +1225,7 @@ function ga_print_agent(array $aagent, string $pre = '')
     $the_err,
     $aagent['str_mul'],
     $aagent['fitness'],
+    $aagent['non_zero'],
     $the_mats
   );
   $final = "\n\n--- AYAM TARGET: $ayam_target $final";

@@ -11,14 +11,16 @@ global $main_pop, $sel_pop;
 global $protein_min, $protein_max, $karbo_min, $karbo_max, $price_max;
 global $lemak_max, $serat_max;
 global $susu_max, $roti_max, $khijau_max;
-global $def_mix_cap, $suplemen_price_per_kg;
+global $def_mix_cap, $suplemen_price_per_kg, $suplemen_price_per_mix;
 
 // used by suplemen
 $suplemen_price_per_kg = 0;
+$suplemen_price_per_mix = 0;
 $def_mix_cap = 100; // 100 kg mixing cap
 $price_max = 19000;
 
 
+include __DIR__ . "/_consts.php";
 include __DIR__ . "/_libs.php";
 include __DIR__ . "/_data.php";
 include __DIR__ . "/_suplemen.php";
@@ -73,10 +75,10 @@ if ($ayam_target == 'starter') {
 
 } elseif ($ayam_target == 'finisher') {
   // usia 4-16/24 minggu
-  $protein_min = 14; // min=15
-  $protein_max = 18; // max=17
-  $karbo_min = 60; // 60-65
-  $karbo_max = 100;
+  $protein_min = 15; // min=15
+  $protein_max = 20; // max=17
+  $karbo_min = 50; // 60-65
+  $karbo_max = 70;
   // $lemak_max = 6;
   // $serat_max = 6;
   // $price_max = 6000;
@@ -86,13 +88,16 @@ if ($ayam_target == 'starter') {
   unset($master_matr_arr['crum592']); // using cp112
   unset($master_matr_arr['cp112']);
 
-  unset($master_matr_arr['tgaplek']);
+  // unset($master_matr_arr['tgaplek']);
   // unset($master_matr_arr['gamblong']);
 
+  // unset($master_matr_arr['susureject']);
   // unset($master_matr_arr['troti']);
+  // unset($master_matr_arr['tkedelai']);
+  // unset($master_matr_arr['karak']);
+
   // unset($master_matr_arr['jagung']);
   // unset($master_matr_arr['bekatul']);
-  // unset($master_matr_arr['tkedelai']);
   // unset($master_matr_arr['tsawit']);
 
   //
@@ -104,7 +109,7 @@ if ($protein_min < 1 || $protein_max < 1 || $karbo_min < 1 || $karbo_max < 1) pr
 
 
 $pop_num = 100; // maximum agents in population
-$max_gen = 100; // maximum generation loop
+$max_gen = 200; // maximum generation loop
 // $max_gen_delta = (int) round($max_gen * .01);
 $max_gen_delta = 5;
 
@@ -147,7 +152,8 @@ for ($gen_loop = 0; $gen_loop < $max_gen; $gen_loop++) {
   // auto extend loop
   // if ($new_good > 0) $max_gen = (int) round($max_gen * 1.05);
   if ($new_good > 0) {
-    $max_gen += $max_gen_delta * $new_good;
+    $inc_good = min(3, $new_good);
+    $max_gen += $max_gen_delta * $inc_good;
     $unchanged_loop -= 100;
   }
 

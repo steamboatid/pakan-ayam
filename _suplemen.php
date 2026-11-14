@@ -1,6 +1,6 @@
 <?php
 
-global $master_supl_arr, $def_mix_cap, $suplemen_price_per_kg;
+global $master_supl_arr, $def_mix_cap, $suplemen_price_per_kg, $suplemen_price_per_mix;
 
 // topmix (medion)	150
 // prozyme (medion)	50
@@ -61,7 +61,7 @@ $ori_master_supl_arr = array(
 // print_rdie($master_supl_arr);
 
 $master_supl_arr = array();
-$sum_price_per_mix = 0;
+$suplemen_price_per_mix = 0;
 
 foreach ($ori_master_supl_arr as $nama_bahan => $aa) {
   $a['harga'] = (float)$aa[0];
@@ -73,15 +73,18 @@ foreach ($ori_master_supl_arr as $nama_bahan => $aa) {
   $a['price_per_mix'] = (float) $price_per_mix;
 
   $master_supl_arr[$nama_bahan] = $a;
-  $sum_price_per_mix += $a['price_per_mix'];
+  $suplemen_price_per_mix += $a['price_per_mix'];
 }
 
 
-$suplemen_price_per_kg = ceil($sum_price_per_mix / $def_mix_cap);
+$suplemen_price_per_kg = ceil($suplemen_price_per_mix / $def_mix_cap);
+
+/*
 print_rdie(
   array(
     'suplemen_price_per_kg' => $suplemen_price_per_kg,
-    'sum_price_per_mix' => $sum_price_per_mix,
+    'sum_price_per_mix' => $suplemen_price_per_mix,
     'def_mix_cap' => $def_mix_cap
   )
 );
+//*/
