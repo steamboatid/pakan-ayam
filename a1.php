@@ -6,16 +6,23 @@
 //
 // ------------------------------------------------------------------------
 
-
-include __DIR__ . "/_libs.php";
-include __DIR__ . "/_data.php";
-include __DIR__ . "/_ga.php";
-
 global $master_matr_arr;
 global $main_pop, $sel_pop;
 global $protein_min, $protein_max, $karbo_min, $karbo_max, $price_max;
 global $lemak_max, $serat_max;
 global $susu_max, $roti_max, $khijau_max;
+global $def_mix_cap, $suplemen_price_per_kg;
+
+// used by suplemen
+$suplemen_price_per_kg = 0;
+$def_mix_cap = 100; // 100 kg mixing cap
+$price_max = 19000;
+
+
+include __DIR__ . "/_libs.php";
+include __DIR__ . "/_data.php";
+include __DIR__ . "/_suplemen.php";
+include __DIR__ . "/_ga.php";
 
 
 // print_rdie($master_matr_arr);
@@ -37,9 +44,6 @@ $serat_max = 7;
 // $susu_max = 30;
 // $roti_max = 30;
 // $khijau_max = 30;
-
-$def_mix_cap = 100; // 100 kg mixing cap
-$price_max = 19000;
 
 
 if ($ayam_target == 'starter') {
@@ -85,7 +89,7 @@ if ($ayam_target == 'starter') {
   unset($master_matr_arr['tgaplek']);
   // unset($master_matr_arr['gamblong']);
 
-  unset($master_matr_arr['troti']);
+  // unset($master_matr_arr['troti']);
   // unset($master_matr_arr['jagung']);
   // unset($master_matr_arr['bekatul']);
   // unset($master_matr_arr['tkedelai']);

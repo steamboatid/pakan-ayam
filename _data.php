@@ -142,14 +142,14 @@ $ori_master_matr_arr = array(
 		0, //min percent (1-100)
 	),
 	'trajukerang' => array(
-		3000, //harga
+		4500, //harga
 		35, //protein
 		7.5, //karbo
 		2, //lemak
 		15, //serat
 		0, //lain-lain
 		0, //amust
-		10, //max percent (1-100)
+		0, //max percent (1-100)
 		0, //min percent (1-100)
 	),
 	'tkangkung' => array(
@@ -160,18 +160,18 @@ $ori_master_matr_arr = array(
 		16.5, //serat
 		0, //lain-lain
 		0, //amust
-		10, //max percent (1-100)
+		0, //max percent (1-100)
 		0, //min percent (1-100)
 	),
 	'tsawit' => array(
 		3000, //harga
 		15, //protein
-		42, //karbo
+		48, //karbo
 		9, //lemak
-		16, //serat
+		17, //serat
 		0, //lain-lain
 		0, //amust
-		10, //max percent (1-100)
+		15, //max percent (1-100)
 		0, //min percent (1-100)
 	),
 
@@ -212,6 +212,64 @@ $ori_master_matr_arr = array(
 		0, //min percent (1-100)
 	),
 
+
+	'ampastahu_kering' => array(
+		3800, // harga
+		23,   // protein
+		35,   // karbo
+		6,    // lemak
+		15,   // serat
+		0,    // lain-lain
+		0,    // amust
+		0,   // max percent (1-100)
+		0,    // min percent (1-100)
+	),
+	'bungkil_kopra' => array(
+		3500, // harga
+		21,   // protein
+		47,   // karbo
+		8,    // lemak
+		14,   // serat
+		0,    // lain-lain
+		0,    // amust
+		0,   // max percent (1-100)
+		0,    // min percent (1-100)
+	),
+	'kulit_kedelai' => array(
+		5500, // harga
+		18,   // protein
+		45,   // karbo
+		5,    // lemak
+		22,   // serat
+		0,    // lain-lain
+		0,    // amust
+		0,    // max percent (1-100)
+		0,    // min percent (1-100)
+	),
+	// 't_indigofera' => array(
+	// 	3500, // harga
+	// 	26,   // protein
+	// 	42,   // karbo
+	// 	3.5,  // lemak
+	// 	13.5, // serat
+	// 	0,    // lain-lain
+	// 	0,    // amust
+	// 	0,    // max percent (1-100)
+	// 	0,    // min percent (1-100)
+	// ),
+
+
+	'jagkatul_kunjang' => array(
+		3500, // harga (estimasi harga pasar lokal bahan murah per kg)
+		10.5, // protein
+		55.0, // karbo (BETN)
+		3.0,  // lemak
+		14.0, // serat (asumsi serat tinggi/asumsi terburuk dari bekatul kasar/campuran sekam)
+		0,    // lain-lain
+		1,    // is_amust
+		10,  // max percent (1-100)
+		0,    // min percent (1-100)
+	),
 );
 
 // prepare master matr
@@ -246,4 +304,3 @@ foreach ($ori_master_matr_arr as $nama_bahan => $aa) {
 }
 
 // print_rdie($master_matr_arr);
-
