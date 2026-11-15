@@ -89,7 +89,7 @@ if ($ayam_target == 'starter') {
   $karbo_max = 70;
   // $lemak_max = 6;
   // $serat_max = 6;
-  // $price_max = 6000;
+  // $price_max = 6500;
 
   // not used materials
   unset($master_matr_arr['crum591']);
