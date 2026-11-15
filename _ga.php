@@ -32,7 +32,7 @@ function ga_compute_agent_fitness(array &$aagent)
 
   // bad agents
   $nz_lo = 3;
-  $nz_hi = 6;
+  $nz_hi = 9;
   if (!is_ayam_starter() && $aagent['non_zero'] <= $nz_lo) {
     $fit_mul *= 2;
     $str_mul[] = "nonzero <= $nz_lo";
@@ -147,9 +147,11 @@ function ga_compute_agent_fitness(array &$aagent)
       //
       elseif ($aperc < $amin_perc && !is_zero($amin_perc)) {
         $fit_mul *= 200;
+        $str_mul[] = 'too-small-' . $amat_name;
         //
       } elseif ($aperc > $amax_perc && !is_zero($amax_perc)) {
         $fit_mul *= 300;
+        $str_mul[] = 'too-big-' . $amat_name;
         //
 
       }
@@ -299,7 +301,7 @@ function ga_compute_agent_fitness(array &$aagent)
   // $fitness = $aagent['price_per_kg'] / ($aagent['karbo']);
 
   $price_near = round($aagent['price_per_kg'] / 1000, 1);
-  $price_pow = round(pow($price_near, 1.5), 2);
+  $price_pow = round(pow($price_near, 1.2), 1);
 
   $fitness = $price_pow * $parts_config / $karbo_protein * $lemak_serat * $fit_mul;
   $aagent['fitness'] = round($fitness, 3);
@@ -357,6 +359,7 @@ function ga_compute_agent_nutrition_percent(array &$aagent)
 
     // check delta
     $del_sum = abs($sum_nut_kg - $apart['part_kg']);
+
     // print_rdie($del_sum);
     if (!is_zero($del_sum, 0)) print_rdie(array($del_sum, $apart_nuts));
   }
@@ -387,10 +390,11 @@ function ga_compute_agent_nutrition_percent(array &$aagent)
   // compute percent nutrition
   foreach ($nuts_arr as $anut_name) {
     $apercent = $sum_nut_kg_all[$anut_name] / $def_mix_cap * 100;
+    $apercent = round($apercent, 1);
     $aagent[$anut_name] = $apercent;
   }
 
-  //print_rdie($aagent);
+  // print_rdie($aagent);
 }
 
 function ga_init_agent(array $aref = array(), float $min_part = 0.0): array
@@ -432,6 +436,7 @@ function ga_init_agent(array $aref = array(), float $min_part = 0.0): array
 
 
   // init part|bagian
+  $max_part = 5;
   $non_zero = 0;
   $avg_part = 0;
   $sum_part = 0;
@@ -445,13 +450,13 @@ function ga_init_agent(array $aref = array(), float $min_part = 0.0): array
     if (is_ayam_starter()) {
       if (is_mat_for_starter($amat_name)) $apart = 1;
       elseif (stristr($amat_name, 'crum') || stristr($amat_name, 'cp')) $apart = 0;
-      else $apart = random_float($min_part, 3);
+      else $apart = random_float($min_part, $max_part);
       //
 
     } else { // finisher, grower
       if (is_mat_for_grower_finisher($amat_name)) $apart = 1;
       elseif (stristr($amat_name, 'crum')) $apart = 0;
-      else $apart = random_float($min_part, 3);
+      else $apart = random_float($min_part, $max_part);
       //
     }
 
@@ -462,11 +467,13 @@ function ga_init_agent(array $aref = array(), float $min_part = 0.0): array
         stristr($amat_name, 'crum')) &&
       $non_zero < 3 &&
       is_zero($apart)
-    )
-      $apart = random_float($min_part, 3);
+    ) {
+      $apart = random_float($min_part, $max_part);
+    }
 
+    // rounding
     $apart = round($apart, 1);
-    // $apart = $non_zero < 6 ? round($apart, 1) : 0;
+    $apart = $non_zero <= 3 ? round($apart, 1) : 0;
 
     $aagent_mats[$amat_name]['part'] = $apart; // part per material
     $sum_part += $apart;
@@ -760,11 +767,13 @@ function ga_doing_crossover(array $aga, array $agb): array
 {
   global $master_matr_arr, $def_mix_cap;
 
-  $ag1 = ga_init_agent();
-  $ag2 = ga_init_agent();
-  $ag3 = ga_init_agent();
-  $ag4 = ga_init_agent();
-  $ag5 = ga_init_agent();
+  $ag1 = ga_init_agent(); // blx alpha
+  $ag2 = ga_init_agent(); // middle
+  $ag3 = ga_init_agent(); // add
+  $ag4 = ga_init_agent(); // max
+  $ag5 = ga_init_agent(); // min
+  $ag6 = ga_init_agent(); // delta
+  $ag7 = ga_init_agent(); // 1 value of any parent
   // print_rdie($ag1);
 
   $matr_arr_idx = array_keys($master_matr_arr);
@@ -772,16 +781,41 @@ function ga_doing_crossover(array $aga, array $agb): array
   // print_rdie($matr_arr_idx);
 
   // compute part|bagian
+  $alpha = 0.2; // 20%
   $amust_min = 0.9;
   foreach ($matr_arr_idx as $mat_name) {
     // print_rdie($aga['mats'][$mat_name]);
 
-    $ag1['mats'][$mat_name]['part'] = round(($aga['mats'][$mat_name]['part'] + $agb['mats'][$mat_name]['part']) / 2, 1);
+    // blx alpha
+    $vala = $aga['mats'][$mat_name]['part'];
+    $valb = $agb['mats'][$mat_name]['part'];
+    $amax = round(max($vala, $valb), 1);
+    $amin = round(min($vala, $valb), 1);
+    $adel = abs($amax - $amin);
+    $bmin = max(0.1, $amin - ($alpha * $adel));
+    $bmax = $amax + ($alpha * $adel);
+    $bmin = min($bmin, $bmax);
+    $bmax = max($bmin, $bmax);
+    $ag1['mats'][$mat_name]['part'] = !is_zero($adel) ? round(random_float($bmin, $bmax), 1) : 0;
 
-    $ag2['mats'][$mat_name]['part'] = round($aga['mats'][$mat_name]['part'] + $agb['mats'][$mat_name]['part'], 1);
-    $ag3['mats'][$mat_name]['part'] = round(max($aga['mats'][$mat_name]['part'], $agb['mats'][$mat_name]['part']), 1);
-    $ag4['mats'][$mat_name]['part'] = round(min($aga['mats'][$mat_name]['part'], $agb['mats'][$mat_name]['part']), 1);
-    $ag5['mats'][$mat_name]['part'] = round(abs($aga['mats'][$mat_name]['part'] - $agb['mats'][$mat_name]['part']), 1);
+    // middle
+    $ag2['mats'][$mat_name]['part'] = round(($amin + $amax) / 2, 1);
+
+    // add
+    $ag3['mats'][$mat_name]['part'] = round($amin + $amax, 1);
+
+    // max
+    $ag4['mats'][$mat_name]['part'] = round($amax, 1);
+
+    // min
+    $ag5['mats'][$mat_name]['part'] = round($amin, 1);
+
+    // delta
+    $ag6['mats'][$mat_name]['part'] = round($adel, 1);
+
+    // 1 value of any parent
+    $ag7['mats'][$mat_name]['part'] = random_int(1, 10) < 5 ? round($vala, 1) : round($valb, 1);
+
 
     // forcing crum always exists
     if (is_mat_for_grower_finisher($mat_name) && is_ayam_grower_finisher()) {
@@ -790,14 +824,18 @@ function ga_doing_crossover(array $aga, array $agb): array
       $ag3['mats'][$mat_name]['part'] = max($ag3['mats'][$mat_name]['part'], $amust_min);
       $ag4['mats'][$mat_name]['part'] = max($ag4['mats'][$mat_name]['part'], $amust_min);
       $ag5['mats'][$mat_name]['part'] = max($ag5['mats'][$mat_name]['part'], $amust_min);
-      //
-
-    } elseif (is_mat_for_starter($mat_name) && is_ayam_starter()) {
+      $ag6['mats'][$mat_name]['part'] = max($ag6['mats'][$mat_name]['part'], $amust_min);
+      $ag7['mats'][$mat_name]['part'] = max($ag7['mats'][$mat_name]['part'], $amust_min);
+    }
+    //--
+    elseif (is_mat_for_starter($mat_name) && is_ayam_starter()) {
       $ag1['mats'][$mat_name]['part'] = max($ag1['mats'][$mat_name]['part'], $amust_min);
       $ag2['mats'][$mat_name]['part'] = max($ag2['mats'][$mat_name]['part'], $amust_min);
       $ag3['mats'][$mat_name]['part'] = max($ag3['mats'][$mat_name]['part'], $amust_min);
       $ag4['mats'][$mat_name]['part'] = max($ag4['mats'][$mat_name]['part'], $amust_min);
       $ag5['mats'][$mat_name]['part'] = max($ag5['mats'][$mat_name]['part'], $amust_min);
+      $ag6['mats'][$mat_name]['part'] = max($ag6['mats'][$mat_name]['part'], $amust_min);
+      $ag7['mats'][$mat_name]['part'] = max($ag7['mats'][$mat_name]['part'], $amust_min);
       //
 
     }
@@ -810,12 +848,16 @@ function ga_doing_crossover(array $aga, array $agb): array
   $non_zero3 = 0;
   $non_zero4 = 0;
   $non_zero5 = 0;
+  $non_zero6 = 0;
+  $non_zero7 = 0;
   foreach ($matr_arr_idx as $mat_name) {
     if ($ag1['mats'][$mat_name]['part'] > 0) $non_zero1++;
     if ($ag2['mats'][$mat_name]['part'] > 0) $non_zero2++;
     if ($ag3['mats'][$mat_name]['part'] > 0) $non_zero3++;
     if ($ag4['mats'][$mat_name]['part'] > 0) $non_zero4++;
     if ($ag5['mats'][$mat_name]['part'] > 0) $non_zero5++;
+    if ($ag6['mats'][$mat_name]['part'] > 0) $non_zero6++;
+    if ($ag7['mats'][$mat_name]['part'] > 0) $non_zero7++;
   }
 
 
@@ -824,12 +866,16 @@ function ga_doing_crossover(array $aga, array $agb): array
   $ag3['non_zero'] = $non_zero3;
   $ag4['non_zero'] = $non_zero4;
   $ag5['non_zero'] = $non_zero5;
+  $ag6['non_zero'] = $non_zero6;
+  $ag7['non_zero'] = $non_zero7;
 
   $ag1['ops'] = 'crossover1';
   $ag2['ops'] = 'crossover2';
   $ag3['ops'] = 'crossover3';
   $ag4['ops'] = 'crossover4';
   $ag5['ops'] = 'crossover5';
+  $ag6['ops'] = 'crossover6';
+  $ag7['ops'] = 'crossover7';
 
   $ags = array();
   if ($non_zero1 > 0) $ags[] = $ag1;
@@ -837,6 +883,8 @@ function ga_doing_crossover(array $aga, array $agb): array
   if ($non_zero3 > 0) $ags[] = $ag3;
   if ($non_zero4 > 0) $ags[] = $ag4;
   if ($non_zero5 > 0) $ags[] = $ag5;
+  if ($non_zero6 > 0) $ags[] = $ag6;
+  if ($non_zero7 > 0) $ags[] = $ag7;
 
   return $ags;
 }

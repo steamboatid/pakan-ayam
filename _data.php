@@ -138,7 +138,7 @@ $ori_master_matr_arr = array(
 		2, //serat
 		0, //lain-lain
 		0, //amust
-		10, //max percent (1-100)
+		15, //max percent (1-100)
 		0, //min percent (1-100)
 	),
 	'trajukerang' => array(
@@ -149,7 +149,7 @@ $ori_master_matr_arr = array(
 		15, //serat
 		0, //lain-lain
 		0, //amust
-		15, //max percent (1-100)
+		10, //max percent (1-100)
 		0, //min percent (1-100)
 	),
 	'tkangkung' => array(
@@ -160,7 +160,7 @@ $ori_master_matr_arr = array(
 		16.5, //serat
 		0, //lain-lain
 		0, //amust
-		15, //max percent (1-100)
+		10, //max percent (1-100)
 		0, //min percent (1-100)
 	),
 	'tsawit' => array(
@@ -171,7 +171,7 @@ $ori_master_matr_arr = array(
 		17, //serat
 		0, //lain-lain
 		0, //amust
-		15, //max percent (1-100)
+		10, //max percent (1-100)
 		0, //min percent (1-100)
 	),
 
