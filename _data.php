@@ -73,6 +73,7 @@ $ori_master_matr_arr = array(
 	),
 
 
+	// udanawu, blitar
 	// 'tgaplek' => array(
 	// 	6500, //harga 			was 8000
 	// 	2, //protein
@@ -96,6 +97,7 @@ $ori_master_matr_arr = array(
 	// 	0, //min percent (1-100)
 	// ),
 
+	// desa jati, udanawu, blitar
 	// 'troti' => array(
 	// 	4500, //harga			was 5000
 	// 	12, //protein
@@ -130,6 +132,7 @@ $ori_master_matr_arr = array(
 	// 	0,    // min percent (1-100)
 	// ),
 
+	// tunge, kediri
 	'tikan' => array(
 		7500, //harga
 		40, //protein
@@ -176,6 +179,7 @@ $ori_master_matr_arr = array(
 	),
 
 
+	// kepung, kediri
 	// 'susureject' => array(
 	// 	5000, //harga			was 5500
 	// 	45, //protein
@@ -184,7 +188,7 @@ $ori_master_matr_arr = array(
 	// 	2, //serat
 	// 	0, //lain-lain
 	// 	0, //amust
-	// 	0, //max percent (1-100)
+	// 	15, //max percent (1-100)
 	// 	0, //min percent (1-100)
 	// ),
 
@@ -203,6 +207,7 @@ $ori_master_matr_arr = array(
 	),
 
 
+	// wates, kediri
 	'ampkelapa' => array(
 		4000, //harga
 		7, //protein
@@ -225,6 +230,7 @@ $ori_master_matr_arr = array(
 		0, //max percent (1-100)
 		0, //min percent (1-100)
 	),
+
 
 
 	// 'ampastahu_kering' => array(

@@ -17,7 +17,7 @@ global $def_mix_cap, $suplemen_price_per_kg, $suplemen_price_per_mix;
 $suplemen_price_per_kg = 0;
 $suplemen_price_per_mix = 0;
 $def_mix_cap = 100; // 100 kg mixing cap
-$price_max = 7000;
+$price_max = 17000;
 
 
 include __DIR__ . "/_consts.php";

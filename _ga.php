@@ -1,17 +1,17 @@
 <?php
 
-function ga_is_good_agent_single(array $aagent): bool
-{
-  global $protein_min, $protein_max, $karbo_min, $karbo_max, $price_max;
+// function ga_is_good_agent_single(array $aagent): bool
+// {
+//   global $protein_min, $protein_max, $karbo_min, $karbo_max, $price_max;
 
-  $is_bad = $aagent['non_zero'] < 3 ||
-    $aagent['sum_part'] > 20 || $aagent['sum_part'] < 5;
-  // $aagent['min_percent'] < 5 ||
-  // $aagent['protein'] < $protein_min ||
-  // $aagent['karbo'] < $karbo_min ||
-  // $aagent['price_per_kg'] > $price_max;
-  return !$is_bad;
-}
+//   $is_bad = $aagent['non_zero'] < 3 ||
+//     $aagent['sum_part'] > 20 || $aagent['sum_part'] < 5;
+//   // $aagent['min_percent'] < 5 ||
+//   // $aagent['protein'] < $protein_min ||
+//   // $aagent['karbo'] < $karbo_min ||
+//   // $aagent['price_per_kg'] > $price_max;
+//   return !$is_bad;
+// }
 
 function ga_compute_agent_fitness(array &$aagent)
 {
@@ -45,16 +45,17 @@ function ga_compute_agent_fitness(array &$aagent)
     $str_err[] = "non zero > $nz_hi";
   }
 
+  $aval = round($aagent['sum_part'], 1);
   if ($aagent['sum_part'] > 20) {
     $fit_mul *= 2;
     $str_mul[] = 'sumpart-many';
-    $str_err[] = 'too many parts';
+    $str_err[] = "too many parts: $aval";
   }
   //---
   elseif ($aagent['sum_part'] < 5) {
     $fit_mul *= 2;
     $str_mul[] = 'sumpart-few';
-    $str_err[] = 'too few parts';
+    $str_err[] = "too few parts: $aval";
   }
 
   // min percent too small
@@ -286,10 +287,12 @@ function ga_compute_agent_fitness(array &$aagent)
   // elseif (is_ayam_sow())
   //   $karbo_protein = (round($aagent['protein'], 0) * 2) + (round($aagent['karbo'], 0) * 1);
 
-  $karbo_protein = round($karbo_protein, 1);
+  $karbo_protein = round($karbo_protein, 0);
 
 
   $lemak_serat = $aagent['serat'] + $aagent['lemak'];
+  $lemak_serat = round($lemak_serat, 0);
+
   // $parts_config = $aagent['avg_part'] * $aagent['sum_part'] * $aagent['non_zero'];
   $parts_config = $aagent['sum_part'] * pow($aagent['non_zero'], 1.5);
   $parts_config = round($parts_config, 1);
@@ -300,7 +303,7 @@ function ga_compute_agent_fitness(array &$aagent)
   // $fitness = $aagent['price_per_kg'] * $lemak_serat * $amust_part * $aagent['non_zero'] * $aagent['avg_part'] * $aagent['sum_part']  / ($aagent['protein'] + $aagent['karbo']);
   // $fitness = $aagent['price_per_kg'] / ($aagent['karbo']);
 
-  $price_near = round($aagent['price_per_kg'] / 1000, 1);
+  $price_near = round($aagent['price_per_kg'] / 1000, 0);
   $price_pow = round(pow($price_near, 1.2), 1);
 
   $fitness = $price_pow * $parts_config / $karbo_protein * $lemak_serat * $fit_mul;
@@ -397,7 +400,7 @@ function ga_compute_agent_nutrition_percent(array &$aagent)
   // print_rdie($aagent);
 }
 
-function ga_init_agent(array $aref = array(), float $min_part = 0.0): array
+function ga_init_agent(array $aref = array(), float $min_part = 1.0): array
 {
   global $master_matr_arr, $def_mix_cap, $ayam_target;
 
@@ -597,7 +600,7 @@ function ga_compute_agent_part_percent_price(array &$aagent)
   }
 
   $price_per_kg = $tot_price / $def_mix_cap;
-  $price_per_kg = round($price_per_kg, 0);
+  $price_per_kg = ceil($price_per_kg);
 
   $avg_part = $sum_part / $non_zero;
 
@@ -673,11 +676,22 @@ function ga_init_pop(int $num = 100): array
     //   if ($fails < $num) $num--;
     // }
 
+    // make sure distance is OK, not too close to other agents
+    if (count($agent_arr) > 0) {
+      $is_good = ga_is_good_agent_to_population($agent_arr, $aagent);
+      if (!$is_good) {
+        echo ".";
+        $i--;
+        continue;
+      }
+    }
+
     $agent_arr[] = $aagent;
   }
 
 
 
+  /*
   // use all mats
   for ($i = 0; $i < $num; $i++) {
 
@@ -698,6 +712,7 @@ function ga_init_pop(int $num = 100): array
 
     $agent_arr[] = $aagent;
   }
+  //*/
 
   return $agent_arr;
 }
@@ -818,7 +833,9 @@ function ga_doing_crossover(array $aga, array $agb): array
 
 
     // forcing crum always exists
-    if (is_mat_for_grower_finisher($mat_name) && is_ayam_grower_finisher()) {
+    $b1 = is_mat_for_grower_finisher($mat_name) && is_ayam_grower_finisher();
+    $b2 = is_mat_for_starter($mat_name) && is_ayam_starter();
+    if ($b1 || $b2) {
       $ag1['mats'][$mat_name]['part'] = max($ag1['mats'][$mat_name]['part'], $amust_min);
       $ag2['mats'][$mat_name]['part'] = max($ag2['mats'][$mat_name]['part'], $amust_min);
       $ag3['mats'][$mat_name]['part'] = max($ag3['mats'][$mat_name]['part'], $amust_min);
@@ -826,18 +843,6 @@ function ga_doing_crossover(array $aga, array $agb): array
       $ag5['mats'][$mat_name]['part'] = max($ag5['mats'][$mat_name]['part'], $amust_min);
       $ag6['mats'][$mat_name]['part'] = max($ag6['mats'][$mat_name]['part'], $amust_min);
       $ag7['mats'][$mat_name]['part'] = max($ag7['mats'][$mat_name]['part'], $amust_min);
-    }
-    //--
-    elseif (is_mat_for_starter($mat_name) && is_ayam_starter()) {
-      $ag1['mats'][$mat_name]['part'] = max($ag1['mats'][$mat_name]['part'], $amust_min);
-      $ag2['mats'][$mat_name]['part'] = max($ag2['mats'][$mat_name]['part'], $amust_min);
-      $ag3['mats'][$mat_name]['part'] = max($ag3['mats'][$mat_name]['part'], $amust_min);
-      $ag4['mats'][$mat_name]['part'] = max($ag4['mats'][$mat_name]['part'], $amust_min);
-      $ag5['mats'][$mat_name]['part'] = max($ag5['mats'][$mat_name]['part'], $amust_min);
-      $ag6['mats'][$mat_name]['part'] = max($ag6['mats'][$mat_name]['part'], $amust_min);
-      $ag7['mats'][$mat_name]['part'] = max($ag7['mats'][$mat_name]['part'], $amust_min);
-      //
-
     }
   }
   // print_rdie($ag4);
@@ -987,22 +992,14 @@ function ga_mutation(array $apop, string $mut_type = ''): array
       // else $ag3['mats'][$mat_name]['part'] = 0;
 
       // forcing crum always exists
-      if (is_mat_for_grower_finisher($mat_name) && is_ayam_grower_finisher()) {
+      $b1 = is_mat_for_grower_finisher($mat_name) && is_ayam_grower_finisher();
+      $b2 = is_mat_for_starter($mat_name) && is_ayam_starter();
+      if ($b1 || $b2) {
         $ag1['mats'][$mat_name]['part'] = max($ag1['mats'][$mat_name]['part'], $amust_min);
         $ag2['mats'][$mat_name]['part'] = max($ag2['mats'][$mat_name]['part'], $amust_min);
         $ag3['mats'][$mat_name]['part'] = max($ag3['mats'][$mat_name]['part'], $amust_min);
         $ag4['mats'][$mat_name]['part'] = max($ag4['mats'][$mat_name]['part'], $amust_min);
         $ag5['mats'][$mat_name]['part'] = max($ag5['mats'][$mat_name]['part'], $amust_min);
-        //
-
-      } elseif (is_mat_for_starter($mat_name) && is_ayam_starter()) {
-        $ag1['mats'][$mat_name]['part'] = max($ag1['mats'][$mat_name]['part'], $amust_min);
-        $ag2['mats'][$mat_name]['part'] = max($ag2['mats'][$mat_name]['part'], $amust_min);
-        $ag3['mats'][$mat_name]['part'] = max($ag3['mats'][$mat_name]['part'], $amust_min);
-        $ag4['mats'][$mat_name]['part'] = max($ag4['mats'][$mat_name]['part'], $amust_min);
-        $ag5['mats'][$mat_name]['part'] = max($ag5['mats'][$mat_name]['part'], $amust_min);
-        //
-
       }
     }
 
@@ -1122,13 +1119,13 @@ function ga_is_good_agent_to_agent(array $aga, array $agb): bool
   // check material distance
   if ($is_good) {
     $dist_mat = ga_dist_mat_part($aga, $agb);
-    $is_good = $dist_mat > 0.1;
+    $is_good = $dist_mat > 0.5;
   }
 
   // check nutrition distance
   if ($is_good) {
     $dist_nutri = ga_dist_nutri($aga, $agb);
-    $is_good = $dist_nutri > 0.1;
+    $is_good = $dist_nutri > 0.5;
   }
 
   /*
@@ -1159,10 +1156,20 @@ function ga_is_good_agent_to_agent(array $aga, array $agb): bool
   }
   //*/
 
+  // if ($is_good) {
+  //   // check price_per_kg
+  //   $del_price = (float) abs($aga['price_per_kg'] - $agb['price_per_kg']);
+  //   $max_price = (float) max($aga['price_per_kg'], $agb['price_per_kg']);
+  //   $pro_price = round($del_price / $max_price * 100);
+  //   $is_good = $pro_price > 1; // more than 1% difference
+  // }
+
   if ($is_good) {
     // check fitness
     $del_fitness = (float) abs($aga['fitness'] - $agb['fitness']);
-    $is_good = $del_fitness > 0.1;
+    $max_fitness = (float) max($aga['fitness'], $agb['fitness']);
+    $pro_fitness = round($del_fitness / $max_fitness * 100);
+    $is_good = $pro_fitness > 5; // more than 5% difference in fitness
   }
 
   return $is_good;
@@ -1197,7 +1204,7 @@ function ga_merge_main_population(array &$main_pop, array &$res_pop): int
 
     if (
       $aagent_fitness < $worst_fitness &&
-      ga_is_good_agent_single($aagent) &&
+      // ga_is_good_agent_single($aagent) &&
       ga_is_good_agent_to_population($main_pop, $aagent)
     ) {
       $main_pop[] = $aagent;
