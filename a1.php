@@ -117,7 +117,7 @@ if ($protein_min < 1 || $protein_max < 1 || $karbo_min < 1 || $karbo_max < 1) pr
 
 
 $pop_num = 100; // maximum agents in population
-$max_gen = 200; // maximum generation loop
+$max_gen = 50; // maximum generation loop
 // $max_gen_delta = (int) round($max_gen * .01);
 $max_gen_delta = 5;
 
@@ -126,82 +126,14 @@ $sel_pop = array();
 
 // generate random agents
 $main_pop = ga_init_pop($pop_num);
-// ga_sort_population($main_pop);
 
 // sort ascending, lowest fitness at front
 ga_sort_population($main_pop);
 
 
-// pre
-$pre_best_fit = PHP_INT_MAX;
-$unchanged_loop = 0;
+ga_main_loop($max_gen, $max_gen_delta, $main_pop, true, true);
+// ga_more_loop($max_gen, $max_gen_delta, $pop_num, $main_pop);
 
-for ($gen_loop = 0; $gen_loop < $max_gen; $gen_loop++) {
-  // select + tournament
-  $mate_pop = ga_select($main_pop);
-
-  // crossover
-  $cr_pop = ga_crossover($mate_pop);
-  // print_rdie($cr_pop);
-
-  // mutation
-  $mu_pop1 = ga_mutation($mate_pop, 'mate');
-  $mu_pop2 = ga_mutation($cr_pop, 'cr');
-  // print_rdie($mu_pop2);
-
-  // merge all ops
-  $res_pop = array_merge($cr_pop, $mu_pop1, $mu_pop2);
-  ga_compute_population($res_pop);
-
-  // merge main pop, delete bad agents
-  $new_good = ga_merge_main_population($main_pop, $res_pop);
-  // print_rdie($main_pop[0]);
-
-  // auto extend loop
-  // if ($new_good > 0) $max_gen = (int) round($max_gen * 1.05);
-  if ($new_good > 0) {
-    $inc_good = min(3, $new_good);
-    $max_gen += $max_gen_delta * $inc_good;
-    $unchanged_loop -= 100;
-  }
-
-  // ga_sort_population($main_pop);
-
-  // best agent
-  $agent_best = $main_pop[0];
-  $best_fitness = round((float) $agent_best['fitness'], 5);
-  $best_price = (float) $agent_best['price_per_kg'];
-  $best_price = round($best_price);
-
-  // worst agent
-  $last_idx = array_key_last($main_pop);
-  $agent_worst = $main_pop[$last_idx];
-  $worst_fitness = round((float) $agent_worst['fitness'], 5);
-  $worst_price = (float) $agent_worst['price_per_kg'];
-  $worst_price = round($worst_price);
-
-  echo "\n LOOP=$gen_loop of $max_gen \tbest=$best_price,$best_fitness \tworst=$worst_price,$worst_fitness";
-  // print_r(array_keys($main_pop));
-
-  $del_price = abs($best_price - $worst_price);
-  $del_fitness = abs($best_fitness - $worst_fitness);
-  if (is_zero($del_fitness)) break;
-
-  if (!is_zero($worst_fitness)) {
-    $pro_fitness = (float) abs($del_fitness / $worst_fitness * 100);
-    if ($pro_fitness < 5) break;
-  }
-
-  // check if best fitness not changed after N loop
-  $del_fit_pre = abs($pre_best_fit - $best_fitness);
-  if (!is_zero($del_fit_pre)) {
-    $unchanged_loop = 0;
-    $pre_best_fit = $best_fitness;
-  } else {
-    $unchanged_loop++;
-    if ($unchanged_loop > 1000) break;
-  }
-}
 
 echo "\n";
 // print_r($main_pop[1]);
