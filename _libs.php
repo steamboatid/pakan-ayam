@@ -18,6 +18,13 @@ function print_rdie(mixed $a)
   die();
 }
 
+function array_shuffle(array &$src)
+{
+  shuffle($src);
+  shuffle($src);
+  $src = array_values($src);
+}
+
 function is_zero(int|float $a, int $precision = 5): bool
 {
   $aa = abs($a * pow(10, $precision));

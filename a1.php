@@ -12,12 +12,17 @@ global $protein_min, $protein_max, $karbo_min, $karbo_max, $price_max;
 global $lemak_max, $serat_max;
 global $susu_max, $roti_max, $khijau_max;
 global $def_mix_cap, $suplemen_price_per_kg, $suplemen_price_per_mix;
+global $min_price_agent, $cheap_agents, $best_agents;
 
 // used by suplemen
 $suplemen_price_per_kg = 0;
 $suplemen_price_per_mix = 0;
 $def_mix_cap = 100; // 100 kg mixing cap
 $price_max = 17000;
+
+$min_price_agent = null;
+$cheap_agents = array();
+$best_agents = array();
 
 
 include __DIR__ . "/_consts.php";
@@ -132,7 +137,16 @@ ga_sort_population($main_pop);
 
 
 ga_main_loop($max_gen, $max_gen_delta, $main_pop, true, true);
-// ga_more_loop($max_gen, $max_gen_delta, $pop_num, $main_pop);
+
+// reloop using cheap agents
+$tmp_pop = array_merge($cheap_agents, $best_agents);
+if (count($tmp_pop) < 5) {
+  $tmp_pop = array_merge(array_slice($main_pop, 0, 5), $tmp_pop);
+}
+$price_max += 1000;
+$main_pop = $tmp_pop;
+ga_main_loop($max_gen * 10, $max_gen_delta * 2, $main_pop, true, true);
+
 
 
 echo "\n";
@@ -141,6 +155,7 @@ print_r($main_pop[0]);
 
 echo "\n\n--- AYAM TARGET: $ayam_target ";
 ga_print_pop($main_pop, 5);
+// if (!empty($cheap_agents)) ga_print_pop($cheap_agents, 3);
 // ga_print_agent($main_pop[1]);
 // ga_print_agent($main_pop[0]);
 

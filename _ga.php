@@ -32,7 +32,7 @@ function ga_compute_agent_fitness(array &$aagent)
 
   // bad agents
   $nz_lo = 1;
-  $nz_hi = 9;
+  $nz_hi = 7;
   if (!is_ayam_starter() && $aagent['non_zero'] <= $nz_lo) {
     $fit_mul *= 2;
     $str_mul[] = "nonzero <= $nz_lo";
@@ -60,13 +60,13 @@ function ga_compute_agent_fitness(array &$aagent)
 
   // min percent too small
   if ($aagent['min_percent'] <= TOO_SMALL_PERCENT) {
-    $fit_mul *= 200;
+    $fit_mul *= 20;
     $str_mul[] = 'minperc';
     $str_err[] = 'too small percent';
   }
   // max percent too big
   elseif ($aagent['max_percent'] >= TOO_BIG_PERCENT) {
-    $fit_mul *= 300;
+    $fit_mul *= 30;
     $str_mul[] = 'maxperc';
     $str_err[] = 'too big percent';
   }
@@ -85,13 +85,13 @@ function ga_compute_agent_fitness(array &$aagent)
 
   $ok_prote = false;
   if ($aagent['protein'] < $protein_min) {
-    $fit_mul *= 300;
+    $fit_mul *= 30;
     $str_mul[] = 'prote-min';
     $str_err[] = 'protein too low';
   }
   //---
   elseif ($aagent['protein'] > $protein_max) {
-    $fit_mul *= 400;
+    $fit_mul *= 40;
     $str_mul[] = 'prote-max';
     $str_err[] = 'protein too high';
   }
@@ -100,13 +100,13 @@ function ga_compute_agent_fitness(array &$aagent)
 
   $ok_karbo = false;
   if ($aagent['karbo'] < $karbo_min) {
-    $fit_mul *= 500;
+    $fit_mul *= 50;
     $str_mul[] = 'karbo-min';
     $str_err[] = 'karbo too low';
   }
   //---
   elseif ($aagent['karbo'] > $karbo_max) {
-    $fit_mul *= 600;
+    $fit_mul *= 60;
     $str_mul[] = 'karbo-max';
     $str_err[] = 'karbo too high';
   }
@@ -114,13 +114,13 @@ function ga_compute_agent_fitness(array &$aagent)
   else $ok_karbo = true;
 
   if ((!$ok_prote && $ok_karbo) || ($ok_prote && !$ok_karbo)) {
-    $fit_mul *= 500;
+    $fit_mul *= 70;
     $aagent['err'] = 'prote-karbo-mismatch';
     $str_mul[] = 'prote-karbo-mismatch';
   }
 
   if ($aagent['price_per_kg'] > $price_max) {
-    $fit_mul *= 600;
+    $fit_mul *= 80;
     $str_mul[] = 'price-max';
     $str_err[] = 'price too high';
   }
@@ -147,11 +147,11 @@ function ga_compute_agent_fitness(array &$aagent)
         continue;
       //
       elseif ($aperc < $amin_perc && !is_zero($amin_perc)) {
-        $fit_mul *= 200;
+        $fit_mul *= 20;
         $str_mul[] = 'too-small-' . $amat_name;
         //
       } elseif ($aperc > $amax_perc && !is_zero($amax_perc)) {
-        $fit_mul *= 300;
+        $fit_mul *= 30;
         $str_mul[] = 'too-big-' . $amat_name;
         //
 
@@ -160,12 +160,12 @@ function ga_compute_agent_fitness(array &$aagent)
 
     } else {
       if ($aperc < $amin_perc && !is_zero($amin_perc)) {
-        $fit_mul *= 400;
+        $fit_mul *= 40;
         $str_mul[] = 'amust-too-small-' . $amat_name;
         //
 
       } elseif ($aperc > $amax_perc && !is_zero($amax_perc)) {
-        $fit_mul *= 500;
+        $fit_mul *= 50;
         $str_mul[] = 'amust-too-big-' . $amat_name;
         //
       }
@@ -226,12 +226,12 @@ function ga_compute_agent_fitness(array &$aagent)
   $exist_pakan_starter = is_agent_mat_part_exists($aagent, 'crum591');
   $exist_pakan_finisher = is_agent_mat_part_exists($aagent, 'crum592') || is_agent_mat_part_exists($aagent, 'cp112');
   if (is_ayam_starter() && $exist_pakan_finisher) {
-    $fit_mul *= 800;
+    $fit_mul *= 80;
     $str_mul[] = 'amust-wrong';
     //
 
   } elseif (is_ayam_grower_finisher() && $exist_pakan_starter) {
-    $fit_mul *= 800;
+    $fit_mul *= 80;
     $str_mul[] = 'amust-wrong';
     //
   }
@@ -304,7 +304,8 @@ function ga_compute_agent_fitness(array &$aagent)
   // $fitness = $aagent['price_per_kg'] / ($aagent['karbo']);
 
   $price_near = round($aagent['price_per_kg'] / 1000, 0);
-  $price_pow = round(pow($price_near, 1.2), 1);
+  $price_pow = round(pow($price_near, 1.5), 1);
+  // print_rdie(array($price_near, $aagent['price_per_kg']));
 
   $fitness = $price_pow * $parts_config / $karbo_protein * $lemak_serat * $fit_mul;
   $aagent['fitness'] = round($fitness, 3);
@@ -751,25 +752,33 @@ function ga_sort_population(array &$apop)
 
 function ga_select(array $apop): array
 {
+  global $cheap_agents;
+
   if (count($apop) < 5) print_rdie('FATAL ERROR');
 
   // init and auto append worst agent
   $agent_worst = array_pop($apop);
   $bpop = array($agent_worst);
 
-  shuffle($apop);
-  shuffle($apop);
+  array_shuffle($apop);
   $ag1 = array_pop($apop);
   $ag2 = array_pop($apop);
   $aga = $ag1['fitness'] < $ag2['fitness'] ? $ag1 : $ag2;
   $bpop[] = $aga;
 
-  shuffle($apop);
-  shuffle($apop);
+  array_shuffle($apop);
   $ag1 = array_pop($apop);
   $ag2 = array_pop($apop);
   $agb = $ag1['fitness'] < $ag2['fitness'] ? $ag1 : $ag2;
   $bpop[] = $agb;
+
+  if (count($cheap_agents) > 2) {
+    array_shuffle($cheap_agents);
+    $ag1 = $cheap_agents[0];
+    $ag2 = $cheap_agents[1];
+    $agc = $ag1['fitness'] < $ag2['fitness'] ? $ag1 : $ag2;
+    $bpop[] = $agc;
+  }
 
   return $bpop;
 }
@@ -1177,7 +1186,7 @@ function ga_is_good_agent_to_agent(array $aga, array $agb): bool
 
 function ga_is_good_agent_to_population(array &$main_pop, array $aagent): bool
 {
-  $is_good = false;
+  $is_good = true; // if main_pop is empty, then it's good
   foreach ($main_pop as $pop_agent) {
     $is_good = ga_is_good_agent_to_agent($pop_agent, $aagent);
     if (!$is_good) break;
@@ -1286,8 +1295,14 @@ function ga_print_agent(array $aagent, string $pre = '')
 
 function ga_print_pop(array $apop, int $num = 3)
 {
+  global $min_price_agent;
+
   for ($i = $num - 1; $i >= 0; $i--) {
     ga_print_agent($apop[$i], strval($i + 1) . ".");
+  }
+
+  if (is_array($min_price_agent)) {
+    ga_print_agent($min_price_agent, '0.');
   }
 }
 
@@ -1302,6 +1317,11 @@ function ga_main_loop(
   bool $dolongloop,
   bool $doverbose
 ): int {
+
+  global $protein_min, $protein_max, $karbo_min, $karbo_max, $price_max;
+  global $lemak_max, $serat_max;
+  global $min_price_agent, $cheap_agents, $best_agents;
+
   // pre
   $pre_best_fit = PHP_INT_MAX;
   $unchanged_loop = 0;
@@ -1376,7 +1396,32 @@ function ga_main_loop(
       $unchanged_loop++;
       if ($unchanged_loop > 1000) break;
     }
+
+    $best_params = ga_best_params($main_pop);
+    $bp_min_price = (float)$best_params['min_price'];
+    $bp_low_price = $bp_min_price + 1000;
+    $bp_good_count = $best_params['good_count'];
+    $bp_min_price_agent = $best_params['min_price_agent'];
+    if ($bp_good_count > 0 && $bp_low_price < $price_max) {
+      $price_max = $bp_low_price;
+      $min_price_agent = $bp_min_price_agent;
+
+      if (ga_is_good_agent_to_population($cheap_agents, $bp_min_price_agent))
+        $cheap_agents[] = $bp_min_price_agent;
+
+      $ccount = count($cheap_agents);
+      if ($ccount <= 6) {
+        $max_gen += $max_gen_delta;
+        $unchanged_loop -= 100;
+      }
+
+      echo "\t bp=$bp_min_price, good=$bp_good_count, cc=$ccount ";
+    }
+
+    if (ga_is_good_agent_to_population($best_agents, $agent_best))
+      $best_agents[] = $agent_best;
   }
+
 
   return $all_good;
 }
@@ -1393,6 +1438,8 @@ function ga_best_params(array $main_pop): array
   $min_karbo = PHP_INT_MAX;
   $max_karbo = 0;
 
+  $min_price_agent = null;
+
   $good_agents = array();
   foreach ($main_pop as $idx => $aagent) {
     if (!empty($aagent['str_mul'])) continue;
@@ -1402,6 +1449,7 @@ function ga_best_params(array $main_pop): array
     // get minimum price
     if ($aagent['price_per_kg'] < $min_price) {
       $min_price = (float) $aagent['price_per_kg'];
+      $min_price_agent = $aagent;
     }
     if ($aagent['price_per_kg'] > $max_price) {
       $max_price = (float) $aagent['price_per_kg'];
@@ -1435,6 +1483,7 @@ function ga_best_params(array $main_pop): array
     'good_agents' => $good_agents,
     'good_count' => count($good_agents),
     'min_price' => $min_price,
+    'min_price_agent' => $min_price_agent,
     'max_price' => $max_price,
     'min_protein' => $min_protein,
     'max_protein' => $max_protein,
@@ -1474,6 +1523,7 @@ function ga_more_loop(int $max_gen, int $max_gen_delta, int $pop_num, array &$ma
     $cur_max_protein = $rets['max_protein'];
     $cur_min_karbo = $rets['min_karbo'];
     $cur_max_karbo = $rets['max_karbo'];
+    $cur_good_agents = $rets['good_agents'];
 
     $new_strs = array();
     if ($cur_max_price < $price_max) {
@@ -1481,11 +1531,11 @@ function ga_more_loop(int $max_gen, int $max_gen_delta, int $pop_num, array &$ma
       $new_strs[] = "NEW PRICE MAX: $price_max";
     }
 
-    if ($cur_max_protein > $protein_min) {
-      $protein_min = $cur_max_protein;
-      $protein_max = max($protein_max, $cur_max_protein + 5);
-      $new_strs[] = "NEW PROTEIN MIN: $protein_min";
-    }
+    // if ($cur_max_protein > $protein_min) {
+    //   $protein_min = $cur_max_protein;
+    //   $protein_max = max($protein_max, $cur_max_protein + 5);
+    //   $new_strs[] = "NEW PROTEIN MIN: $protein_min";
+    // }
 
     // if ($cur_min_karbo > $karbo_min) {
     //   $karbo_min = $cur_max_karbo;
@@ -1501,6 +1551,7 @@ function ga_more_loop(int $max_gen, int $max_gen_delta, int $pop_num, array &$ma
       // $main_pop = array_merge($main_pop, $new_pop);
 
       $main_pop = ga_init_pop($pop_num);
+      $main_pop = array_merge($main_pop, $cur_good_agents);
       ga_sort_population($main_pop);
 
       ga_main_loop($max_gen, $max_gen_delta, $main_pop, true, true);

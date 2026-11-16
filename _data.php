@@ -73,7 +73,7 @@ $ori_master_matr_arr = array(
 	),
 
 
-	// udanawu, blitar
+	// udanawu, blitar. pohong selep: 2600/kg
 	// 'tgaplek' => array(
 	// 	6500, //harga 			was 8000
 	// 	2, //protein
