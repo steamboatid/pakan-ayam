@@ -1,5 +1,8 @@
 <?php
 
+declare(strict_types=1);
+
+
 // function ga_is_good_agent_single(array $aagent): bool
 // {
 //   global $protein_min, $protein_max, $karbo_min, $karbo_max, $price_max;
@@ -304,7 +307,7 @@ function ga_compute_agent_fitness(array &$aagent)
   // $fitness = $aagent['price_per_kg'] / ($aagent['karbo']);
 
   $price_near = round($aagent['price_per_kg'] / 1000, 0);
-  $price_pow = round(pow($price_near, 1.5), 1);
+  $price_pow = round(pow($price_near, 2), 1);
   // print_rdie(array($price_near, $aagent['price_per_kg']));
 
   $fitness = $price_pow * $parts_config / $karbo_protein * $lemak_serat * $fit_mul;
@@ -323,7 +326,7 @@ function ga_compute_agent_nutrition_percent(array &$aagent)
 
   $sum_part = 0;
   $matr_arr_idx = array_keys($master_matr_arr);
-  // shuffle($matr_arr_idx);
+  // array_shuffle($matr_arr_idx);
 
   // init zeroing
   $aagent = array_replace($aagent, array(
@@ -444,9 +447,9 @@ function ga_init_agent(array $aref = array(), float $min_part = 1.0): array
   $non_zero = 0;
   $avg_part = 0;
   $sum_part = 0;
-  shuffle($matr_arr_idx);
-  shuffle($matr_arr_idx);
+  array_shuffle($matr_arr_idx);
   // print_rdie($matr_arr_idx);
+
   foreach ($matr_arr_idx as $amat_name) {
     $apart = 0;
     $aagent_mats[$amat_name] = array();
@@ -493,7 +496,7 @@ function ga_init_agent(array $aref = array(), float $min_part = 1.0): array
   $max_loop = count($matr_arr_idx_random);
   while ($non_zero < 4 && $aloop < $max_loop) {
     $aloop++;
-    shuffle($matr_arr_idx_random);
+    array_shuffle($matr_arr_idx_random);
     $amat_name = array_pop($matr_arr_idx_random);
     // print_rdie($amat_name);
 
@@ -513,7 +516,7 @@ function ga_init_agent(array $aref = array(), float $min_part = 1.0): array
   $max_loop = count($matr_arr_idx_random);
   while ($sum_part < 5 && $aloop < $max_loop) {
     $aloop++;
-    shuffle($matr_arr_idx_random);
+    array_shuffle($matr_arr_idx_random);
     $amat_name = array_pop($matr_arr_idx_random);
     // print_rdie($amat_name);
 
@@ -549,7 +552,7 @@ function ga_compute_agent_part_percent_price(array &$aagent)
 
   $sum_part = 0;
   $matr_arr_idx = array_keys($master_matr_arr);
-  // shuffle($matr_arr_idx);
+  // array_shuffle($matr_arr_idx);
   // print_rdie($matr_arr_idx);
 
   $non_zero = 0;
@@ -801,7 +804,7 @@ function ga_doing_crossover(array $aga, array $agb): array
   // print_rdie($ag1);
 
   $matr_arr_idx = array_keys($master_matr_arr);
-  // shuffle($matr_arr_idx);
+  // array_shuffle($matr_arr_idx);
   // print_rdie($matr_arr_idx);
 
   // compute part|bagian
@@ -838,7 +841,7 @@ function ga_doing_crossover(array $aga, array $agb): array
     $ag6['mats'][$mat_name]['part'] = round($adel, 1);
 
     // 1 value of any parent
-    $ag7['mats'][$mat_name]['part'] = random_int(1, 10) < 5 ? round($vala, 1) : round($valb, 1);
+    $ag7['mats'][$mat_name]['part'] = random_integer(1, 10) < 5 ? round($vala, 1) : round($valb, 1);
 
 
     // forcing crum always exists
@@ -941,7 +944,7 @@ function ga_mutation(array $apop, string $mut_type = ''): array
     $ag2 = $aga; // divide 2-5
     $ag3 = $aga; // unzero
     $ag4 = $aga; // zero one material
-    $ag5 = $aga; // multiply by 1.1-2.0
+    $ag5 = $aga; // multiply by 1.1-2.1
 
     $ag_tikan = $aga; // forcing tikan
     $ag_tkedelai = $aga; // forcing tkedelai
@@ -952,13 +955,12 @@ function ga_mutation(array $apop, string $mut_type = ''): array
     $done4 = 0;
     $done5 = 0;
 
-    shuffle($matr_arr_idx);
-    shuffle($matr_arr_idx);
+    array_shuffle($matr_arr_idx);
     foreach ($matr_arr_idx as $mat_name) {
 
       // add random part
       if ($done1 < 1 && !is_zero($ag1['mats'][$mat_name]['part'])) {
-        $add_part = random_int(0, 2);
+        $add_part = round(random_float(0, 3), 1);
         if ($add_part > 0) {
           $ag1['mats'][$mat_name]['part'] = round($ag1['mats'][$mat_name]['part'] + $add_part, 1);
           $done1++;
@@ -967,14 +969,14 @@ function ga_mutation(array $apop, string $mut_type = ''): array
 
       // divide part by 2-5
       if ($done2 < 1 && !is_zero($ag2['mats'][$mat_name]['part'])) {
-        $div_part = random_int(2, 5);
+        $div_part = round(random_float(2, 5), 1);
         $ag2['mats'][$mat_name]['part'] = round($ag2['mats'][$mat_name]['part'] / $div_part, 1);
         $done2++;
       }
 
       // unzero empty part
       if ($done3 < 1 && is_zero($ag3['mats'][$mat_name]['part'])) {
-        $not_zero_part = random_int(0, 2);
+        $not_zero_part = round(random_float(0, 3), 1);
         if ($not_zero_part > 0) {
           $ag3['mats'][$mat_name]['part'] = $not_zero_part;
           $done3++;
@@ -987,17 +989,17 @@ function ga_mutation(array $apop, string $mut_type = ''): array
         $done4++;
       }
 
-      // multiply by factor: 1.1-2.0
+      // multiply by factor: 1.1-2.1
       if ($done5 < 1 && !is_zero($ag5['mats'][$mat_name]['part'])) {
-        $mul_part = random_float(1.1, 2.0);
+        $mul_part = round(random_float(1.1, 2.1), 1);
         $ag5['mats'][$mat_name]['part'] *= $mul_part;
         $done5++;
       }
 
 
-      // $ag1['mats'][$mat_name]['part'] = round($aga['mats'][$mat_name]['part'] + random_int(0, 2), 1);
-      // $ag2['mats'][$mat_name]['part'] = round($aga['mats'][$mat_name]['part'] / random_int(2, 5), 1);
-      // if (is_zero($aga['mats'][$mat_name]['part'])) $ag3['mats'][$mat_name]['part'] = random_int(0, 2);
+      // $ag1['mats'][$mat_name]['part'] = round($aga['mats'][$mat_name]['part'] + random_integer(0, 2), 1);
+      // $ag2['mats'][$mat_name]['part'] = round($aga['mats'][$mat_name]['part'] / random_integer(2, 5), 1);
+      // if (is_zero($aga['mats'][$mat_name]['part'])) $ag3['mats'][$mat_name]['part'] = random_integer(0, 2);
       // else $ag3['mats'][$mat_name]['part'] = 0;
 
       // forcing crum always exists
@@ -1011,6 +1013,7 @@ function ga_mutation(array $apop, string $mut_type = ''): array
         $ag5['mats'][$mat_name]['part'] = max($ag5['mats'][$mat_name]['part'], $amust_min);
       }
     }
+    // print_rdie(array($done1, $done2, $done3, $done4, $done5));
 
     // forcing tikan
     $mat_name = 'tikan';

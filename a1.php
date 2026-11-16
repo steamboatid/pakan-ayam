@@ -1,5 +1,8 @@
 <?php
 
+declare(strict_types=1);
+
+
 // ------------------------------------------------------------------------
 //
 // INI UNTUK AYAM
@@ -25,6 +28,7 @@ $cheap_agents = array();
 $best_agents = array();
 
 
+include __DIR__ . "/_random.php";
 include __DIR__ . "/_consts.php";
 include __DIR__ . "/_libs.php";
 include __DIR__ . "/_data.php";
@@ -45,8 +49,8 @@ $protein_min = 0;
 $protein_max = 0;
 $karbo_min = 0;
 $karbo_max = 0;
-$lemak_max = 7;
-$serat_max = 7;
+$lemak_max = 9;
+$serat_max = 9;
 
 // $susu_max = 30;
 // $roti_max = 30;
@@ -122,7 +126,7 @@ if ($protein_min < 1 || $protein_max < 1 || $karbo_min < 1 || $karbo_max < 1) pr
 
 
 $pop_num = 100; // maximum agents in population
-$max_gen = 50; // maximum generation loop
+$max_gen = 100; // maximum generation loop
 // $max_gen_delta = (int) round($max_gen * .01);
 $max_gen_delta = 5;
 
@@ -145,7 +149,7 @@ if (count($tmp_pop) < 5) {
 }
 $price_max += 1000;
 $main_pop = $tmp_pop;
-ga_main_loop($max_gen * 10, $max_gen_delta * 2, $main_pop, true, true);
+ga_main_loop($max_gen * 2, $max_gen_delta * 10, $main_pop, true, true);
 
 
 

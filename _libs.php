@@ -1,5 +1,8 @@
 <?php
 
+declare(strict_types=1);
+
+
 function print_rdie(mixed $a)
 {
   print_r($a);
@@ -20,8 +23,11 @@ function print_rdie(mixed $a)
 
 function array_shuffle(array &$src)
 {
-  shuffle($src);
-  shuffle($src);
+  global $prng;
+  $prng->shuffle_array($src);
+  $prng->shuffle_array($src);
+  // shuffle($src);
+  // shuffle($src);
   $src = array_values($src);
 }
 
@@ -33,9 +39,19 @@ function is_zero(int|float $a, int $precision = 5): bool
 
 function random_float(float $min, float $max): float
 {
+  global $prng;
   $amin = min($min, $max);
   $amax = max($min, $max);
-  return (float) (new Random\Randomizer())->getFloat($amin, $amax);
+  // return (float) (new Random\Randomizer())->getFloat($amin, $amax);
+  return (float) $prng->get_float($amin, $amax);
+}
+
+function random_integer(int $min, int $max): float
+{
+  global $prng;
+  $amin = min($min, $max);
+  $amax = max($min, $max);
+  return (float) $prng->get_int($amin, $amax);
 }
 
 function is_ayam_starter(): bool

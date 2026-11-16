@@ -1,5 +1,8 @@
 <?php
 
+declare(strict_types=1);
+
+
 // include __DIR__ . "/_libs.php";
 
 $ori_master_matr_arr = array(
