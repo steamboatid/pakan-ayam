@@ -49,8 +49,8 @@ $protein_min = 0;
 $protein_max = 0;
 $karbo_min = 0;
 $karbo_max = 0;
-$lemak_max = 9;
-$serat_max = 9;
+$lemak_max = 9; // 7-8
+$serat_max = 7; // 5-6
 
 // $susu_max = 30;
 // $roti_max = 30;
@@ -79,6 +79,9 @@ if ($ayam_target == 'starter') {
   unset($master_matr_arr['tgaplek']);
   unset($master_matr_arr['gamblong']);
 
+  unset($master_matr_arr['trajukerang']); // masuk suplemen
+  unset($master_matr_arr['tkangkung']); // masuk suplemen
+
   // unset($master_matr_arr['susureject']);
   // unset($master_matr_arr['troti']);
   // unset($master_matr_arr['tkedelai']);
@@ -96,7 +99,7 @@ if ($ayam_target == 'starter') {
   $protein_max = 20; // max=17
   $karbo_min = 50; // 60-65
   $karbo_max = 70;
-  // $lemak_max = 6;
+  // $lemak_max = 7;
   // $serat_max = 6;
   // $price_max = 6500;
 
@@ -107,6 +110,9 @@ if ($ayam_target == 'starter') {
 
   unset($master_matr_arr['tgaplek']);
   unset($master_matr_arr['gamblong']);
+
+  // unset($master_matr_arr['trajukerang']); // masuk suplemen
+  // unset($master_matr_arr['tkangkung']); // masuk suplemen
 
   // unset($master_matr_arr['susureject']);
   // unset($master_matr_arr['troti']);
@@ -143,9 +149,11 @@ ga_sort_population($main_pop);
 ga_main_loop($max_gen, $max_gen_delta, $main_pop, true, true);
 
 // reloop using cheap agents
-$tmp_pop = array_merge($cheap_agents, $best_agents);
+$tmp_pop = $cheap_agents;
+ga_merge_main_population($tmp_pop, $best_agents, false);
 if (count($tmp_pop) < 5) {
-  $tmp_pop = array_merge(array_slice($main_pop, 0, 5), $tmp_pop);
+  $abest_pop = array_slice($main_pop, 0, 5);
+  ga_merge_main_population($tmp_pop, $abest_pop, false);
 }
 $price_max += 1000;
 $main_pop = $tmp_pop;

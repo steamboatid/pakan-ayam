@@ -55,7 +55,7 @@ function ga_compute_agent_fitness(array &$aagent)
     $str_err[] = "too many parts: $aval";
   }
   //---
-  elseif ($aagent['sum_part'] < 5) {
+  elseif ($aagent['sum_part'] < TOO_FEW_PARTS) {
     $fit_mul *= 2;
     $str_mul[] = 'sumpart-few';
     $str_err[] = "too few parts: $aval";
@@ -1277,7 +1277,7 @@ function ga_print_agent(array $aagent, string $pre = '')
   $the_err = !empty($the_err) ? "\tErr: $the_err" : '';
   $price_kg = number_format($aagent['price_per_kg'], 0, '.', ',');
   $final = sprintf(
-    "\n%s \tProtein=%-.1f%% \tKarbo=%-.1f%% \tLemak=%-.1f%% \tSerat=%-.1f%% \tPrice=%s %s Mul=%s Fit=%-.3f nz=%d \n%s \n",
+    "\n%s \tProtein=%-.1f%% \tKarbo=%-.1f%% \tLemak=%-.1f%% \tSerat=%-.1f%% \tPrice=%s %s Mul=%s Fit=%-.2f nz=%d \n%s \n",
     $pre,
     round($aagent['protein'], 1),
     round($aagent['karbo'], 1),
@@ -1400,11 +1400,14 @@ function ga_main_loop(
       if ($unchanged_loop > 1000) break;
     }
 
+
     $best_params = ga_best_params($main_pop);
     $bp_min_price = (float)$best_params['min_price'];
     $bp_low_price = $bp_min_price + 1000;
+
     $bp_good_count = $best_params['good_count'];
     $bp_min_price_agent = $best_params['min_price_agent'];
+
     if ($bp_good_count > 0 && $bp_low_price < $price_max) {
       $price_max = $bp_low_price;
       $min_price_agent = $bp_min_price_agent;
@@ -1420,6 +1423,19 @@ function ga_main_loop(
 
       echo "\t bp=$bp_min_price, good=$bp_good_count, cc=$ccount ";
     }
+
+    /*
+    $bp_max_protein = (float)$best_params['max_protein'];
+    $bp_low_protein = $bp_max_protein;
+
+    if ($bp_good_count > 0 && $bp_low_protein > $protein_min) {
+      // print_rdie(array($bp_low_protein, $protein_min));
+      $protein_min = $bp_low_protein;
+      $protein_max = min(23, max($protein_max, $bp_low_protein + 20));
+      echo "\t bprote=$protein_min ";
+    }//*/
+
+
 
     if (ga_is_good_agent_to_population($best_agents, $agent_best))
       $best_agents[] = $agent_best;

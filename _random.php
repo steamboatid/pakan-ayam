@@ -55,7 +55,7 @@ class rng_service
 }
 
 // Usage
-$prng = new rng_service(time());
+$prng = new rng_service(119922);
 
 
 /*
