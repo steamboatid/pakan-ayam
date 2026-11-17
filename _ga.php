@@ -5,7 +5,7 @@ declare(strict_types=1);
 
 // function ga_is_good_agent_single(array $aagent): bool
 // {
-//   global $protein_min, $protein_max, $karbo_min, $karbo_max, $price_max;
+//   global $protein_min, $protein_max, $karbo_min, $karbo_max, $price_max, $kkalkg_min;
 
 //   $is_bad = $aagent['non_zero'] < 3 ||
 //     $aagent['sum_part'] > 20 || $aagent['sum_part'] < 5;
@@ -18,7 +18,7 @@ declare(strict_types=1);
 
 function ga_compute_agent_fitness(array &$aagent)
 {
-  global $protein_min, $protein_max, $karbo_min, $karbo_max, $price_max;
+  global $protein_min, $protein_max, $karbo_min, $karbo_max, $price_max, $kkalkg_min;
   global $lemak_max, $serat_max;
   global $master_matr_arr, $def_mix_cap;
 
@@ -48,18 +48,18 @@ function ga_compute_agent_fitness(array &$aagent)
     $str_err[] = "non zero > $nz_hi";
   }
 
-  $aval = round($aagent['sum_part'], 1);
-  if ($aagent['sum_part'] > TOO_MANY_PARTS) {
-    $fit_mul *= 2;
-    $str_mul[] = 'sumpart-many';
-    $str_err[] = "too many parts: $aval";
-  }
-  //---
-  elseif ($aagent['sum_part'] < TOO_FEW_PARTS) {
-    $fit_mul *= 2;
-    $str_mul[] = 'sumpart-few';
-    $str_err[] = "too few parts: $aval";
-  }
+  // $aval = round($aagent['sum_part'], 1);
+  // if ($aagent['sum_part'] > TOO_MANY_PARTS) {
+  //   $fit_mul *= 2;
+  //   $str_mul[] = 'sumpart-many';
+  //   $str_err[] = "too many parts: $aval";
+  // }
+  // //---
+  // elseif ($aagent['sum_part'] < TOO_FEW_PARTS) {
+  //   $fit_mul *= 2;
+  //   $str_mul[] = 'sumpart-few';
+  //   $str_err[] = "too few parts: $aval";
+  // }
 
   // min percent too small
   if ($aagent['min_percent'] <= TOO_SMALL_PERCENT) {
@@ -74,17 +74,17 @@ function ga_compute_agent_fitness(array &$aagent)
     $str_err[] = 'too big percent';
   }
 
-  if ($aagent['lemak'] > $lemak_max) {
-    $str_err[] = 'lemak too high';
-    $fit_mul *= 2;
-    $str_mul[] = 'lemak-max';
-  }
+  // if ($aagent['lemak'] > $lemak_max) {
+  //   $str_err[] = 'lemak too high';
+  //   $fit_mul *= 2;
+  //   $str_mul[] = 'lemak-max';
+  // }
 
-  if ($aagent['serat'] > $serat_max) {
-    $fit_mul *= 2;
-    $str_mul[] = 'serat-max';
-    $str_err[] = 'serat too high';
-  }
+  // if ($aagent['serat'] > $serat_max) {
+  //   $fit_mul *= 2;
+  //   $str_mul[] = 'serat-max';
+  //   $str_err[] = 'serat too high';
+  // }
 
   $ok_prote = false;
   if ($aagent['protein'] < $protein_min) {
@@ -108,11 +108,11 @@ function ga_compute_agent_fitness(array &$aagent)
     $str_err[] = 'karbo too low';
   }
   //---
-  elseif ($aagent['karbo'] > $karbo_max) {
-    $fit_mul *= 60;
-    $str_mul[] = 'karbo-max';
-    $str_err[] = 'karbo too high';
-  }
+  // elseif ($aagent['karbo'] > $karbo_max) {
+  //   $fit_mul *= 60;
+  //   $str_mul[] = 'karbo-max';
+  //   $str_err[] = 'karbo too high';
+  // }
   //---
   else $ok_karbo = true;
 
@@ -122,11 +122,17 @@ function ga_compute_agent_fitness(array &$aagent)
     $str_mul[] = 'prote-karbo-mismatch';
   }
 
-  if ($aagent['price_per_kg'] > $price_max) {
-    $fit_mul *= 80;
-    $str_mul[] = 'price-max';
-    $str_err[] = 'price too high';
-  }
+  // if ($aagent['kkalkg'] < $kkalkg_min) {
+  //   $fit_mul *= 900;
+  //   $str_mul[] = 'kkalkg-min';
+  //   $str_err[] = 'kkalkg too low';
+  // }
+
+  // if ($aagent['price_per_kg'] > $price_max) {
+  //   $fit_mul *= 80;
+  //   $str_mul[] = 'price-max';
+  //   $str_err[] = 'price too high';
+  // }
 
 
 
@@ -307,10 +313,12 @@ function ga_compute_agent_fitness(array &$aagent)
   // $fitness = $aagent['price_per_kg'] / ($aagent['karbo']);
 
   $price_near = round($aagent['price_per_kg'] / 1000, 0);
-  $price_pow = round(pow($price_near, 2), 1);
+  $price_pow = round(pow($price_near, 1.5), 1);
   // print_rdie(array($price_near, $aagent['price_per_kg']));
 
-  $fitness = $price_pow * $parts_config / $karbo_protein * $lemak_serat * $fit_mul;
+  $mkalkg = round($aagent['kkalkg'] / 1000, 0); // mega kalori per kg (10^6 kal /kg)
+
+  $fitness = $price_pow * $parts_config / $karbo_protein * $lemak_serat / $mkalkg * $fit_mul;
   $aagent['fitness'] = round($fitness, 3);
 
   // dbg fit_mul
@@ -335,13 +343,15 @@ function ga_compute_agent_nutrition_percent(array &$aagent)
     'lemak' => 0,
     'serat' => 0,
     'lain' => 0,
+    'kkalkg' => 0, // kilo kalori per kg
   ));
   // print_rdie($aagent);
 
 
   $nuts_arr = array('protein', 'karbo', 'lemak', 'serat', 'lain');
 
-  // compute kg nutrition per material
+  // compute kg nutrition per material and compute total kilo kalori
+  $sum_kkal_kg = 0;
   foreach ($aagent['mats'] as $amat => $apart) {
     $amat_data = $master_matr_arr[$amat];
     // print_rdie(array($amat_data, $amat, $apart));
@@ -369,7 +379,14 @@ function ga_compute_agent_nutrition_percent(array &$aagent)
 
     // print_rdie($del_sum);
     if (!is_zero($del_sum, 0)) print_rdie(array($del_sum, $apart_nuts));
+
+    // kilo kalori
+    $akkal_kg = $apart['part_percent'] / 100.0 * $amat_data['kkalkg'];
+    $sum_kkal_kg += $akkal_kg;
   }
+
+  $aagent['kkalkg'] = round($sum_kkal_kg, 1);
+  // print_rdie($aagent['kkalkg']);
 
 
   // compute sum kg nutrition for all material
@@ -1277,12 +1294,13 @@ function ga_print_agent(array $aagent, string $pre = '')
   $the_err = !empty($the_err) ? "\tErr: $the_err" : '';
   $price_kg = number_format($aagent['price_per_kg'], 0, '.', ',');
   $final = sprintf(
-    "\n%s \tProtein=%-.1f%% \tKarbo=%-.1f%% \tLemak=%-.1f%% \tSerat=%-.1f%% \tPrice=%s %s Mul=%s Fit=%-.2f nz=%d \n%s \n",
+    "\n%s \tProtein=%-.1f%% \tKarbo=%-.1f%% \tLemak=%-.1f%% \tSerat=%-.1f%% \tKal=%-.0f kkal/kg \tPrice=%s %s Mul=%s Fit=%-.2f nz=%d \n%s \n",
     $pre,
     round($aagent['protein'], 1),
     round($aagent['karbo'], 1),
     round($aagent['lemak'], 1),
     round($aagent['serat'], 1),
+    round($aagent['kkalkg'], 1),
     $price_kg,
     $the_err,
     $aagent['str_mul'],
@@ -1321,7 +1339,7 @@ function ga_main_loop(
   bool $doverbose
 ): int {
 
-  global $protein_min, $protein_max, $karbo_min, $karbo_max, $price_max;
+  global $protein_min, $protein_max, $karbo_min, $karbo_max, $price_max, $kkalkg_min;
   global $lemak_max, $serat_max;
   global $min_price_agent, $cheap_agents, $best_agents;
 
@@ -1518,7 +1536,7 @@ function ga_best_params(array $main_pop): array
 
 function ga_more_loop(int $max_gen, int $max_gen_delta, int $pop_num, array &$main_pop)
 {
-  global $protein_min, $protein_max, $karbo_min, $karbo_max, $price_max;
+  global $protein_min, $protein_max, $karbo_min, $karbo_max, $price_max, $kkalkg_min;
   global $lemak_max, $serat_max;
 
   $half_gen = (int) ($max_gen / 2);

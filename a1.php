@@ -11,7 +11,7 @@ declare(strict_types=1);
 
 global $master_matr_arr;
 global $main_pop, $sel_pop;
-global $protein_min, $protein_max, $karbo_min, $karbo_max, $price_max;
+global $protein_min, $protein_max, $karbo_min, $karbo_max, $price_max, $kkalkg_min;
 global $lemak_max, $serat_max;
 global $susu_max, $roti_max, $khijau_max;
 global $def_mix_cap, $suplemen_price_per_kg, $suplemen_price_per_mix;
@@ -51,6 +51,7 @@ $karbo_min = 0;
 $karbo_max = 0;
 $lemak_max = 9; // 7-8
 $serat_max = 7; // 5-6
+$kkalkg_min = 2900;
 
 // $susu_max = 30;
 // $roti_max = 30;
@@ -60,16 +61,17 @@ $serat_max = 7; // 5-6
 if ($ayam_target == 'starter') {
   // usia 0-4 minggu
   $protein_min = 16; // min=18
-  $protein_max = 22; // max=20
+  $protein_max = 20; // max=20
   $karbo_min = 40; // 55-60
   $karbo_max = 55;
   // $lemak_max = 9;
   // $serat_max = 9;
   // $price_max = 20000;
+  $kkalkg_min = 2900;
 
   // mod material
-  // $master_matr_arr['tikan']['maxperc']= 0;
-  // $master_matr_arr['tikan']['minperc']= 0;
+  $master_matr_arr['tikan']['maxperc']= 50;
+  $master_matr_arr['tikan']['minperc']= 15;
 
   // not used materials
   unset($master_matr_arr['crum591']);
@@ -102,6 +104,7 @@ if ($ayam_target == 'starter') {
   // $lemak_max = 7;
   // $serat_max = 6;
   // $price_max = 6500;
+  $kkalkg_min = 3200;
 
   // not used materials
   unset($master_matr_arr['crum591']);
@@ -111,8 +114,8 @@ if ($ayam_target == 'starter') {
   unset($master_matr_arr['tgaplek']);
   unset($master_matr_arr['gamblong']);
 
-  // unset($master_matr_arr['trajukerang']); // masuk suplemen
-  // unset($master_matr_arr['tkangkung']); // masuk suplemen
+  unset($master_matr_arr['trajukerang']); // masuk suplemen
+  unset($master_matr_arr['tkangkung']); // masuk suplemen
 
   // unset($master_matr_arr['susureject']);
   // unset($master_matr_arr['troti']);
@@ -150,14 +153,18 @@ ga_main_loop($max_gen, $max_gen_delta, $main_pop, true, true);
 
 // reloop using cheap agents
 $tmp_pop = $cheap_agents;
-ga_merge_main_population($tmp_pop, $best_agents, false);
+if (!empty($tmp_pop)) ga_merge_main_population($tmp_pop, $best_agents, false);
+else $tmp_pop = $best_agents;
+
 if (count($tmp_pop) < 5) {
   $abest_pop = array_slice($main_pop, 0, 5);
   ga_merge_main_population($tmp_pop, $abest_pop, false);
 }
-$price_max += 1000;
-$main_pop = $tmp_pop;
-ga_main_loop($max_gen * 2, $max_gen_delta * 10, $main_pop, true, true);
+if (count($tmp_pop) >= 5) {
+  $price_max += 1000;
+  $main_pop = $tmp_pop;
+  ga_main_loop($max_gen * 2, $max_gen_delta * 5, $main_pop, true, true);
+}
 
 
 
