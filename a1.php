@@ -106,6 +106,10 @@ if ($ayam_target == 'starter') {
   // $price_max = 6500;
   $kkalkg_min = 3200;
 
+  // mod material
+  $master_matr_arr['gamblong']['maxperc']= 50;
+  $master_matr_arr['gamblong']['minperc']= 15;
+
   // not used materials
   unset($master_matr_arr['crum591']);
   unset($master_matr_arr['crum592']); // using cp112
