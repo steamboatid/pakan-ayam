@@ -1444,6 +1444,7 @@ function ga_main_loop(
 
       echo "\t\t bp=$bp_min_price, good=$bp_good_count, cc=$ccount \n";
     }
+    // if ($bp_good_count > 0) print_rdie(array($bp_good_count, $bp_low_price, $price_max));
 
     /*
     $bp_max_protein = (float) $best_params['max_protein'];
