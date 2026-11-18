@@ -678,6 +678,7 @@ function ga_fix_agent_mat_part(array &$aagent)
 function ga_init_pop(int $num = 100): array
 {
   $agent_arr = array();
+  $nears = 0;
   // $fails = 0;
 
   for ($i = 0; $i < $num; $i++) {
@@ -698,11 +699,12 @@ function ga_init_pop(int $num = 100): array
     // }
 
     // make sure distance is OK, not too close to other agents
-    if (count($agent_arr) > 0) {
+    if (count($agent_arr) > 0 && $nears < $num) {
       $is_good = ga_is_good_agent_to_population($agent_arr, $aagent);
       if (!$is_good) {
         echo ".";
         $i--;
+        $nears++;
         continue;
       }
     }

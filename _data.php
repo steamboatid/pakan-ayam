@@ -41,7 +41,7 @@ $ori_master_matr_arr = array(
 	),
 
 	'jagung' => array(
-		8000,  // harga
+		8000,  // harga, 8000
 		9,     // protein
 		70,    // karbo
 		5.5,   // lemak
@@ -53,7 +53,7 @@ $ori_master_matr_arr = array(
 		3550,  // kilo kalori per kg
 	),
 	'bekatul' => array(
-		7000,  // harga
+		7000,  // harga, 7000
 		12,    // protein
 		54,    // karbo
 		15,    // lemak
@@ -65,7 +65,7 @@ $ori_master_matr_arr = array(
 		3100,  // kilo kalori per kg
 	),
 	'dedak' => array(
-		2500,  // harga
+		2500,  // harga, 2500
 		8,     // protein
 		42,    // karbo
 		12,    // lemak
@@ -143,8 +143,8 @@ $ori_master_matr_arr = array(
 
 	// tunge, kediri
 	'tikan' => array(
-		7500,  // harga
-		40,    // protein
+		7500,  // harga, 7500
+		45,    // protein
 		3,     // karbo
 		10,    // lemak
 		2,     // serat
@@ -155,7 +155,7 @@ $ori_master_matr_arr = array(
 		3400,  // kilo kalori per kg
 	),
 	'trajukerang' => array(
-		4500,  // harga
+		4500,  // harga, 4500
 		35,    // protein
 		7.5,   // karbo
 		2,     // lemak
@@ -214,7 +214,7 @@ $ori_master_matr_arr = array(
 		5,     // serat
 		0,     // lain-lain
 		0,     // amust
-		25,    // max percent (1-100)
+		50,    // max percent (1-100)
 		0,     // min percent (1-100)
 		3200,  // kilo kalori per kg
 	),
@@ -233,7 +233,7 @@ $ori_master_matr_arr = array(
 		2700,  // kilo kalori per kg
 	),
 	'karak' => array(
-		5500,  // harga
+		5000,  // harga, 5500
 		7.5,   // protein
 		72,    // karbo
 		1.5,   // lemak
@@ -287,6 +287,8 @@ $ori_master_matr_arr = array(
 
 // prepare master matr
 $master_matr_arr = array();
+$maxperc_arr = array();
+$minperc_arr = array();
 
 foreach ($ori_master_matr_arr as $nama_bahan => $aa) {
 	if (count($aa) < 9) print_rdie(array('bad material', $aa));
@@ -308,6 +310,10 @@ foreach ($ori_master_matr_arr as $nama_bahan => $aa) {
 	$a['kkalkg'] = (float) $aa[9];
 
 	$master_matr_arr[$nama_bahan] = $a;
+
+	if ($a['maxperc'] > 0) $maxperc_arr[$nama_bahan] = $a['maxperc'];
+	if ($a['minperc'] > 0) $minperc_arr[$nama_bahan] = $a['minperc'];
 }
 
 // print_rdie($master_matr_arr);
+// print_rdie(array('max' => $maxperc_arr, 'min' => $minperc_arr));

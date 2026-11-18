@@ -71,7 +71,7 @@ if ($ayam_target == 'starter') {
 
   // mod material
   $master_matr_arr['tikan']['maxperc']= 50;
-  $master_matr_arr['tikan']['minperc']= 15;
+  $master_matr_arr['tikan']['minperc']= 0;
 
   // not used materials
   unset($master_matr_arr['crum591']);
@@ -99,7 +99,7 @@ if ($ayam_target == 'starter') {
   // usia 4-16/24 minggu
   $protein_min = 15; // min=15
   $protein_max = 20; // max=17
-  $karbo_min = 50; // 60-65
+  $karbo_min = 55; // 60-65
   $karbo_max = 70;
   // $lemak_max = 7;
   // $serat_max = 6;
@@ -107,8 +107,10 @@ if ($ayam_target == 'starter') {
   $kkalkg_min = 3200;
 
   // mod material
+  $master_matr_arr['tikan']['maxperc']= 50;
+  $master_matr_arr['tikan']['minperc']= 0;
   $master_matr_arr['gamblong']['maxperc']= 50;
-  $master_matr_arr['gamblong']['minperc']= 15;
+  $master_matr_arr['gamblong']['minperc']= 0;
 
   // not used materials
   unset($master_matr_arr['crum591']);
