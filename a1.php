@@ -70,8 +70,8 @@ if ($ayam_target == 'starter') {
   $kkalkg_min = 2900;
 
   // mod material
-  $master_matr_arr['tikan']['maxperc']= 50;
-  $master_matr_arr['tikan']['minperc']= 0;
+  $master_matr_arr['tikan']['maxperc'] = 50;
+  $master_matr_arr['tikan']['minperc'] = 0;
 
   // not used materials
   unset($master_matr_arr['crum591']);
@@ -93,6 +93,8 @@ if ($ayam_target == 'starter') {
   // unset($master_matr_arr['bekatul']);
   // unset($master_matr_arr['tsawit']);
 
+  unset($master_matr_arr['tcgf']);
+
   //
 
 } elseif ($ayam_target == 'finisher') {
@@ -107,10 +109,10 @@ if ($ayam_target == 'starter') {
   $kkalkg_min = 3200;
 
   // mod material
-  $master_matr_arr['tikan']['maxperc']= 50;
-  $master_matr_arr['tikan']['minperc']= 0;
-  $master_matr_arr['gamblong']['maxperc']= 50;
-  $master_matr_arr['gamblong']['minperc']= 0;
+  $master_matr_arr['tikan']['maxperc'] = 50;
+  $master_matr_arr['tikan']['minperc'] = 0;
+  $master_matr_arr['gamblong']['maxperc'] = 50;
+  $master_matr_arr['gamblong']['minperc'] = 0;
 
   // not used materials
   unset($master_matr_arr['crum591']);
@@ -131,6 +133,8 @@ if ($ayam_target == 'starter') {
   // unset($master_matr_arr['jagung']);
   // unset($master_matr_arr['bekatul']);
   // unset($master_matr_arr['tsawit']);
+
+  unset($master_matr_arr['tcgf']);
 
   //
 
