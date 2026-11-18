@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+
 $ori_master_matr_arr = array(
 	'cp112' => array(
 		14000, // harga
@@ -40,6 +41,7 @@ $ori_master_matr_arr = array(
 		3150,  // kilo kalori per kg
 	),
 
+
 	'jagung' => array(
 		8000,  // harga, 8000
 		9,     // protein
@@ -77,9 +79,10 @@ $ori_master_matr_arr = array(
 		2200,  // kilo kalori per kg
 	),
 
+
 	// udanawu, blitar. pohong selep: 2600/kg
 	// 'tgaplek' => array(
-	//   6500, // harga
+	//   6500, // harga, 8000
 	//   2,    // protein
 	//   82,   // karbo
 	//   1,    // lemak
@@ -102,6 +105,34 @@ $ori_master_matr_arr = array(
 	//   0,    // min percent (1-100)
 	//   3800, // kilo kalori per kg
 	// ),
+	// 'tampkedelai' => array(
+	// 	11000,
+	// 	25,
+	// 	38,
+	// 	18,
+	// 	5,
+	// 	0
+	// ),
+
+
+
+	// 'tkachijau' => array(
+	// 	5500, // was= 5000
+	// 	23,
+	// 	46,
+	// 	1.3,
+	// 	16,
+	// 	0
+	// ),
+	// 'tkupkachijau' => array(
+	// 	5000, // was= 5000
+	// 	11,
+	// 	55,
+	// 	1.5,
+	// 	18,
+	// 	0
+	// ),
+
 
 	// desa jati, udanawu, blitar
 	// 'troti' => array(
@@ -140,6 +171,20 @@ $ori_master_matr_arr = array(
 	//   0,    // min percent (1-100)
 	//   2100, // kilo kalori per kg
 	// ),
+	'tcgf' => array(
+		3850, // harga
+		21,   // protein
+		54,   // karbo
+		3,    // lemak
+		9.5,  // serat
+		0,    // lain-lain
+		0,    // amust
+		0,    // max percent (1-100)
+		0,    // min percent (1-100)
+		2100, // kilo kalori per kg
+	),
+
+
 
 	// tunge, kediri
 	'tikan' => array(
@@ -191,6 +236,7 @@ $ori_master_matr_arr = array(
 		3200,  // kilo kalori per kg
 	),
 
+
 	// kepung, kediri
 	// 'susureject' => array(
 	// 	5000, // harga
@@ -218,6 +264,7 @@ $ori_master_matr_arr = array(
 		0,     // min percent (1-100)
 		3200,  // kilo kalori per kg
 	),
+
 
 	// wates, kediri
 	'ampkelapa' => array(
@@ -270,6 +317,7 @@ $ori_master_matr_arr = array(
 	//   2800, // kilo kalori per kg
 	// ),
 
+
 	// 'jagkatul_kunjang' => array(
 	//   3500, // harga
 	//   10.5, // protein
@@ -282,6 +330,7 @@ $ori_master_matr_arr = array(
 	//   0,    // min percent (1-100)
 	//   2900, // kilo kalori per kg
 	// ),
+
 );
 
 
@@ -317,3 +366,4 @@ foreach ($ori_master_matr_arr as $nama_bahan => $aa) {
 
 // print_rdie($master_matr_arr);
 // print_rdie(array('max' => $maxperc_arr, 'min' => $minperc_arr));
+// print_rdie(array_keys($master_matr_arr));

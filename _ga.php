@@ -6,7 +6,7 @@ declare(strict_types=1);
 // function ga_is_good_agent_single(array $aagent): bool
 // {
 //   global $protein_min, $protein_max, $karbo_min, $karbo_max, $price_max, $kkalkg_min;
-
+//
 //   $is_bad = $aagent['non_zero'] < 3 ||
 //     $aagent['sum_part'] > 20 || $aagent['sum_part'] < 5;
 //   // $aagent['min_percent'] < 5 ||
@@ -108,11 +108,11 @@ function ga_compute_agent_fitness(array &$aagent)
     $str_err[] = 'karbo too low';
   }
   //---
-  // elseif ($aagent['karbo'] > $karbo_max) {
-  //   $fit_mul *= 60;
-  //   $str_mul[] = 'karbo-max';
-  //   $str_err[] = 'karbo too high';
-  // }
+  elseif ($aagent['karbo'] > $karbo_max) {
+    $fit_mul *= 60;
+    $str_mul[] = 'karbo-max';
+    $str_err[] = 'karbo too high';
+  }
   //---
   else $ok_karbo = true;
 

@@ -1,5 +1,8 @@
 <?php
 
+declare(strict_types=1);
+
+
 global $master_supl_arr, $def_mix_cap, $suplemen_price_per_kg, $suplemen_price_per_mix;
 
 // topmix (medion)	150
@@ -34,6 +37,7 @@ $ori_master_supl_arr = array(
     1000, //gram, kemasan
     100, //porsi, per 100kg pakan
   ),
+
   'bawang_putih' => array(
     80000, //harga, per kemasan
     1000, //gram, kemasan

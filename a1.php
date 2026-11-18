@@ -169,7 +169,7 @@ if (count($tmp_pop) < 5) {
 if (count($tmp_pop) >= 5) {
   $price_max += 1000;
   $main_pop = $tmp_pop;
-  ga_main_loop($max_gen * 2, $max_gen_delta * 5, $main_pop, true, true);
+  ga_main_loop($max_gen * 2, $max_gen_delta, $main_pop, true, true);
 }
 
 
