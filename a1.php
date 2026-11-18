@@ -51,7 +51,7 @@ $karbo_min = 0;
 $karbo_max = 0;
 $lemak_max = 9; // 7-8
 $serat_max = 7; // 5-6
-$kkalkg_min = 2900;
+$kkalkg_min = 3200;
 
 // $susu_max = 30;
 // $roti_max = 30;
