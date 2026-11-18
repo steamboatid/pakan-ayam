@@ -74,17 +74,17 @@ function ga_compute_agent_fitness(array &$aagent)
     $str_err[] = 'too big percent';
   }
 
-  // if ($aagent['lemak'] > $lemak_max) {
-  //   $str_err[] = 'lemak too high';
-  //   $fit_mul *= 2;
-  //   $str_mul[] = 'lemak-max';
-  // }
+  if ($aagent['lemak'] > $lemak_max) {
+    $str_err[] = 'lemak too high';
+    $fit_mul *= 2;
+    $str_mul[] = 'lemak-max';
+  }
 
-  // if ($aagent['serat'] > $serat_max) {
-  //   $fit_mul *= 2;
-  //   $str_mul[] = 'serat-max';
-  //   $str_err[] = 'serat too high';
-  // }
+  if ($aagent['serat'] > $serat_max) {
+    $fit_mul *= 2;
+    $str_mul[] = 'serat-max';
+    $str_err[] = 'serat too high';
+  }
 
   $ok_prote = false;
   if ($aagent['protein'] < $protein_min) {
@@ -193,7 +193,7 @@ function ga_compute_agent_fitness(array &$aagent)
     $aagent['mats'][$amat_name]['part'] > 0 && $aagent['mats'][$amat_name]['part_percent'] > 3
   ) {
     $fit_mul *= 0.5;
-    $str_mul[] = 'bekatul>3%';
+    // $str_mul[] = 'bekatul>3%';
   }
 
   // jagung
@@ -203,7 +203,7 @@ function ga_compute_agent_fitness(array &$aagent)
     $aagent['mats'][$amat_name]['part'] > 0 && $aagent['mats'][$amat_name]['part_percent'] > 3
   ) {
     $fit_mul *= 0.5;
-    $str_mul[] = 'jagung>3%';
+    // $str_mul[] = 'jagung>3%';
   }
 
   // tikan
@@ -213,7 +213,7 @@ function ga_compute_agent_fitness(array &$aagent)
     $aagent['mats'][$amat_name]['part'] > 0 && $aagent['mats'][$amat_name]['part_percent'] > 3
   ) {
     $fit_mul *= 0.5;
-    $str_mul[] = 'tikan>3%';
+    // $str_mul[] = 'tikan>3%';
   }
 
   // tkedelai
@@ -223,7 +223,7 @@ function ga_compute_agent_fitness(array &$aagent)
     $aagent['mats'][$amat_name]['part'] > 0 && $aagent['mats'][$amat_name]['part_percent'] > 3
   ) {
     $fit_mul *= 0.5;
-    $str_mul[] = 'tkedelai>3%';
+    // $str_mul[] = 'tkedelai>3%';
   }
   //*/
 
@@ -317,8 +317,9 @@ function ga_compute_agent_fitness(array &$aagent)
   // print_rdie(array($price_near, $aagent['price_per_kg']));
 
   $mkalkg = round($aagent['kkalkg'] / 1000, 0); // mega kalori per kg (10^6 kal /kg)
+  $mkalkg_pow = round(pow($mkalkg, 1.5), 1);
 
-  $fitness = $price_pow * $parts_config / $karbo_protein * $lemak_serat / $mkalkg * $fit_mul;
+  $fitness = $price_pow * $parts_config / $karbo_protein * $lemak_serat / $mkalkg_pow * $fit_mul;
   $aagent['fitness'] = round($fitness, 3);
 
   // dbg fit_mul
@@ -842,7 +843,7 @@ function ga_doing_crossover(array $aga, array $agb): array
     $bmax = $amax + ($alpha * $adel);
     $bmin = min($bmin, $bmax);
     $bmax = max($bmin, $bmax);
-    $ag1['mats'][$mat_name]['part'] = !is_zero($adel) ? round(random_float($bmin, $bmax), 1) : 0;
+    $ag1['mats'][$mat_name]['part'] = !is_zero($adel) ? round(random_float($bmin, $bmax), 1) : random_float(0.1, 2) * $vala;
 
     // middle
     $ag2['mats'][$mat_name]['part'] = round(($amin + $amax) / 2, 1);
@@ -1422,7 +1423,7 @@ function ga_main_loop(
 
 
     $best_params = ga_best_params($main_pop);
-    $bp_min_price = (float)$best_params['min_price'];
+    $bp_min_price = (float) $best_params['min_price'];
     $bp_low_price = $bp_min_price + 1000;
 
     $bp_good_count = $best_params['good_count'];
@@ -1441,11 +1442,11 @@ function ga_main_loop(
         $unchanged_loop -= 100;
       }
 
-      echo "\t bp=$bp_min_price, good=$bp_good_count, cc=$ccount ";
+      echo "\t\t bp=$bp_min_price, good=$bp_good_count, cc=$ccount \n";
     }
 
     /*
-    $bp_max_protein = (float)$best_params['max_protein'];
+    $bp_max_protein = (float) $best_params['max_protein'];
     $bp_low_protein = $bp_max_protein;
 
     if ($bp_good_count > 0 && $bp_low_protein > $protein_min) {

@@ -68,7 +68,7 @@ $master_supl_arr = array();
 $suplemen_price_per_mix = 0;
 
 foreach ($ori_master_supl_arr as $nama_bahan => $aa) {
-  $a['harga'] = (float)$aa[0];
+  $a['harga'] = (float) $aa[0];
   $a['gram'] = (float) $aa[1];
   $a['porsi'] = (float) $aa[2];
 
