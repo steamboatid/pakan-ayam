@@ -189,7 +189,7 @@ $ori_master_matr_arr = array(
 	// tunge, kediri
 	'tikan' => array(
 		7500,  // harga, 7500
-		45,    // protein
+		27,    // protein, 45
 		3,     // karbo
 		10,    // lemak
 		2,     // serat
